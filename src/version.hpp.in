@@ -1,0 +1,37 @@
+/*
+ * AudioVisual
+ * Copyright (C) 2019  Luca Cireddu
+ * sardylan@gmail.com
+ * https://www.lucacireddu.it
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef __AUDIOVISUAL__VERSION__H
+#define __AUDIOVISUAL__VERSION__H
+
+#cmakedefine AUDIOVISUAL_APPLICATION_NAME "@AUDIOVISUAL_APPLICATION_NAME@"
+#cmakedefine AUDIOVISUAL_APPLICATION_VERSION "@AUDIOVISUAL_APPLICATION_VERSION@"
+
+#cmakedefine AUDIOVISUAL_ORGANIZATION_NAME "@AUDIOVISUAL_ORGANIZATION_NAME@"
+#cmakedefine AUDIOVISUAL_ORGANIZATION_DOMAIN "@AUDIOVISUAL_ORGANIZATION_DOMAIN@"
+
+#define APPLICATION_NAME AUDIOVISUAL_APPLICATION_NAME
+#define APPLICATION_VERSION AUDIOVISUAL_APPLICATION_VERSION
+
+#define ORGANIZATION_NAME AUDIOVISUAL_ORGANIZATION_NAME
+#define ORGANIZATION_DOMAIN AUDIOVISUAL_ORGANIZATION_DOMAIN
+
+#endif
