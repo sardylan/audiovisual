@@ -3,7 +3,6 @@ find_package(Qt5 REQUIRED COMPONENTS
         Gui
         Svg
         Widgets
-        SerialPort
         OpenGL)
 
 configure_file(version.hpp.in version.hpp @ONLY)
@@ -11,6 +10,11 @@ configure_file(version.hpp.in version.hpp @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(audiovisual
+        customwidgets/vumeter.cpp
+        customwidgets/vumeter.hpp
+        windows/mainwindow.cpp
+        windows/mainwindow.hpp
+        windows/mainwindow.ui
         audiovisual.cpp
         audiovisual.hpp)
 

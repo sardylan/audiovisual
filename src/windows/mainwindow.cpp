@@ -19,31 +19,34 @@
  *
  */
 
-#include "audiovisual.hpp"
+#include <QtCore/QDebug>
+#include <QtCore/QRandomGenerator>
 
-int main(int argc, char *argv[]) {
-    QCoreApplication::setApplicationName(APPLICATION_NAME);
-    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
-    QCoreApplication::setOrganizationName(ORGANIZATION_NAME);
-    QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
+#include "mainwindow.hpp"
+#include "ui_mainwindow.h"
 
-    AudioVisual qFM1000(argc, argv);
-    qFM1000.prepare();
-    return qFM1000.run();
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+    ui->setupUi(this);
+
+    vuMeter = new VUMeter(this);
+    initVUMeter();
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, [=]() {
+        int val = static_cast<int>(qrand() % (int) ((vuMeter->getMax() + 1) - vuMeter->getMin()) + vuMeter->getMin());
+        vuMeter->setValue(val);
+    });
+    timer->setSingleShot(false);
+    timer->start(10);
+
+    vuMeter->setMin(0);
+    vuMeter->setMax(1024);
 }
 
-AudioVisual::AudioVisual(int &argc, char **argv) : QApplication(argc, argv) {
-    mainWindow = new MainWindow();
+MainWindow::~MainWindow() {
+    delete ui;
 }
 
-AudioVisual::~AudioVisual() {
-    delete mainWindow;
-}
-
-void AudioVisual::prepare() {
-    mainWindow->show();
-}
-
-int AudioVisual::run() {
-    return QApplication::exec();
+void MainWindow::initVUMeter() {
+    ui->vuMeterStackedWidget->addWidget(vuMeter);
 }

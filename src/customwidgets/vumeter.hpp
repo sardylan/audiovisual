@@ -19,31 +19,45 @@
  *
  */
 
-#include "audiovisual.hpp"
 
-int main(int argc, char *argv[]) {
-    QCoreApplication::setApplicationName(APPLICATION_NAME);
-    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
-    QCoreApplication::setOrganizationName(ORGANIZATION_NAME);
-    QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
+#ifndef __AUDIOVISUAL__CUSTOMWIDGETS_VUMETER__H
+#define __AUDIOVISUAL__CUSTOMWIDGETS_VUMETER__H
 
-    AudioVisual qFM1000(argc, argv);
-    qFM1000.prepare();
-    return qFM1000.run();
-}
+#include <QOpenGLWidget>
 
-AudioVisual::AudioVisual(int &argc, char **argv) : QApplication(argc, argv) {
-    mainWindow = new MainWindow();
-}
+class VUMeter : public QOpenGLWidget {
+Q_OBJECT
 
-AudioVisual::~AudioVisual() {
-    delete mainWindow;
-}
+public:
+    VUMeter(QWidget *parent = nullptr);
 
-void AudioVisual::prepare() {
-    mainWindow->show();
-}
+    ~VUMeter();
 
-int AudioVisual::run() {
-    return QApplication::exec();
-}
+    double getMin() const;
+
+    double getMax() const;
+
+    double getValue() const;
+
+public slots:
+
+    void setMin(double min);
+
+    void setMax(double max);
+
+    void setValue(double value);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+private:
+    double min;
+    double max;
+    double interval;
+    double value;
+
+    void updateInterval();
+
+};
+
+#endif

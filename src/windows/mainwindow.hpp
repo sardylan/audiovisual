@@ -19,31 +19,33 @@
  *
  */
 
-#include "audiovisual.hpp"
 
-int main(int argc, char *argv[]) {
-    QCoreApplication::setApplicationName(APPLICATION_NAME);
-    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
-    QCoreApplication::setOrganizationName(ORGANIZATION_NAME);
-    QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
+#ifndef __AUDIOVISUAL__WINDOWS_MAIN__H
+#define __AUDIOVISUAL__WINDOWS_MAIN__H
 
-    AudioVisual qFM1000(argc, argv);
-    qFM1000.prepare();
-    return qFM1000.run();
+#include <QMainWindow>
+#include <QTimer>
+#include <customwidgets/vumeter.hpp>
+
+namespace Ui {
+    class MainWindow;
 }
 
-AudioVisual::AudioVisual(int &argc, char **argv) : QApplication(argc, argv) {
-    mainWindow = new MainWindow();
-}
+class MainWindow : public QMainWindow {
+Q_OBJECT
 
-AudioVisual::~AudioVisual() {
-    delete mainWindow;
-}
+public:
+    explicit MainWindow(QWidget *parent = nullptr);
 
-void AudioVisual::prepare() {
-    mainWindow->show();
-}
+    ~MainWindow();
 
-int AudioVisual::run() {
-    return QApplication::exec();
-}
+private:
+    Ui::MainWindow *ui;
+
+    VUMeter *vuMeter;
+    QTimer *timer;
+
+    void initVUMeter();
+};
+
+#endif

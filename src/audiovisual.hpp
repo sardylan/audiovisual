@@ -27,8 +27,11 @@
 
 #include <QApplication>
 
+#include <windows/mainwindow.hpp>
+
+
 class AudioVisual : public QApplication {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
@@ -39,6 +42,9 @@ public:
     void prepare();
 
     int run();
+
+private:
+    MainWindow *mainWindow;
 
 };
 
