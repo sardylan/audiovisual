@@ -20,7 +20,6 @@
  */
 
 #include <QtCore/QDebug>
-#include <QtCore/QRandomGenerator>
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
@@ -33,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [=]() {
-        int val = static_cast<int>(qrand() % (int) ((vuMeter->getMax() + 1) - vuMeter->getMin()) + vuMeter->getMin());
+        int val = qrand() % 1024;
         vuMeter->setValue(val);
     });
     timer->setSingleShot(false);
@@ -41,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     vuMeter->setMin(0);
     vuMeter->setMax(1024);
+    vuMeter->setWarning(512);
+    vuMeter->setAlert(900);
 }
 
 MainWindow::~MainWindow() {

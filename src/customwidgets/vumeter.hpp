@@ -37,6 +37,10 @@ public:
 
     double getMax() const;
 
+    double getWarning() const;
+
+    double getAlert() const;
+
     double getValue() const;
 
 public slots:
@@ -44,6 +48,10 @@ public slots:
     void setMin(double min);
 
     void setMax(double max);
+
+    void setWarning(double warning);
+
+    void setAlert(double alert);
 
     void setValue(double value);
 
@@ -53,8 +61,12 @@ protected:
 private:
     double min;
     double max;
-    double interval;
+    double warning;
+    double alert;
+
     double value;
+
+    double interval;
 
     void updateInterval();
 

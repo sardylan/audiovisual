@@ -40,27 +40,48 @@ double VUMeter::getMin() const {
     return min;
 }
 
+void VUMeter::setMin(double min) {
+    VUMeter::min = min;
+    updateInterval();
+    update();
+}
+
 double VUMeter::getMax() const {
     return max;
+}
+
+void VUMeter::setMax(double max) {
+    VUMeter::max = max;
+    updateInterval();
+    update();
+}
+
+double VUMeter::getWarning() const {
+    return warning;
+}
+
+void VUMeter::setWarning(double warning) {
+    VUMeter::warning = warning;
+    updateInterval();
+    update();
+}
+
+double VUMeter::getAlert() const {
+    return alert;
+}
+
+void VUMeter::setAlert(double alert) {
+    VUMeter::alert = alert;
+    updateInterval();
+    update();
 }
 
 double VUMeter::getValue() const {
     return value;
 }
 
-void VUMeter::setMin(double min) {
-    VUMeter::min = min;
-    updateInterval();
-}
-
-void VUMeter::setMax(double max) {
-    VUMeter::max = max;
-    updateInterval();
-}
-
 void VUMeter::setValue(double value) {
     VUMeter::value = value;
-
     update();
 }
 
@@ -72,15 +93,6 @@ void VUMeter::paintEvent(QPaintEvent *event) {
     QBrush whiteBrush = QBrush(Qt::white);
     QBrush blackBrush = QBrush(Qt::black);
 
-    QPen whitePen = QPen(Qt::white);
-    whitePen.setWidth(0);
-
-    QPen blackPen = QPen(Qt::black);
-    blackPen.setWidth(0);
-
-    QPen greyPen = QPen(Qt::lightGray);
-    greyPen.setWidth(0);
-
     QPainter painter;
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -88,22 +100,30 @@ void VUMeter::paintEvent(QPaintEvent *event) {
     painter.translate(0, 0);
 
     int width = painter.window().width();
+    int height = painter.window().height();
 
     double pixelWidth = interval / width;
 
+    double valueThreshold = value / pixelWidth;
+    double warningThreshold = warning / pixelWidth;
+    double alertThreshold = alert / pixelWidth;
+
     for (int x = 0; x < width; x++) {
-        painter.save();
+        QPen pen;
 
-        painter.setPen((pixelWidth * x) <= value ? blackPen : whitePen);
-        painter.drawPoint(QPoint(x, 12));
-        painter.drawPoint(QPoint(x, 13));
-        painter.drawPoint(QPoint(x, 14));
-        painter.drawPoint(QPoint(x, 15));
-        painter.drawPoint(QPoint(x, 16));
+        if (x > valueThreshold)
+            pen = QPen(Qt::white);
+        else if (x < warningThreshold)
+            pen = QPen(Qt::green);
+        else if (x < alertThreshold)
+            pen = QPen(Qt::yellow);
+        else
+            pen = QPen(Qt::red);
 
-        painter.setPen(greyPen);
+        pen.setWidth(0);
 
-        painter.restore();
+        painter.setPen(pen);
+        painter.drawLine(x, 0, x, height);
     }
 
     painter.end();
