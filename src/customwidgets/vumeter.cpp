@@ -33,8 +33,7 @@ VUMeter::VUMeter(QWidget *parent) : QOpenGLWidget(parent) {
     value = 0;
 }
 
-VUMeter::~VUMeter() {
-}
+VUMeter::~VUMeter() = default;
 
 double VUMeter::getMin() const {
     return min;

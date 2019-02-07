@@ -29,9 +29,9 @@ class VUMeter : public QOpenGLWidget {
 Q_OBJECT
 
 public:
-    VUMeter(QWidget *parent = nullptr);
+    explicit VUMeter(QWidget *parent = nullptr);
 
-    ~VUMeter();
+    ~VUMeter() override;
 
     double getMin() const;
 
