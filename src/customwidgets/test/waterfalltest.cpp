@@ -72,14 +72,30 @@ void CustomWidgetsWaterfallTest::testInterpolationQuarterSize() {
     }
 }
 
-void CustomWidgetsWaterfallTest::testInterpolationOddSize() {
+void CustomWidgetsWaterfallTest::testInterpolationOddSizeSmaller() {
     const double in[]{1, 2, 3, 4, 5, 6, 7, 8};
     size_t in_ln = 8;
 
-    double expected[]{1.125, 4.375, 5, 7, 8};
+    double expected[]{1.375, 2.875, 4.5, 6.125, 7.625};
 
     size_t actual_ln = 5;
     double actual[5];
+
+    WaterFall::interpolate(in, in_ln, actual, actual_ln);
+
+    for (int i = 0; i < actual_ln; i++) {
+        QCOMPARE(actual[i], expected[i]);
+    }
+}
+
+void CustomWidgetsWaterfallTest::testInterpolationOddSizeGreater() {
+    const double in[]{1, 2, 3, 4, 5, 6, 7, 8};
+    size_t in_ln = 8;
+
+    double expected[]{1.25, 1.75, 2.5, 3.25, 4, 6.25, 5.75, 6.5, 7.25, 8};
+
+    size_t actual_ln = 10;
+    double actual[10];
 
     WaterFall::interpolate(in, in_ln, actual, actual_ln);
 

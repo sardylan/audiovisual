@@ -36,7 +36,9 @@ private slots:
 
     void testInterpolationQuarterSize();
 
-    void testInterpolationOddSize();
+    void testInterpolationOddSizeSmaller();
+
+    void testInterpolationOddSizeGreater();
 
 };
 

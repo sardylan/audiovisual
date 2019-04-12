@@ -83,23 +83,6 @@ void WaterFall::cleanDataList() {
     painter.end();
 }
 
-//int WaterFall::interpolate(int x, float a[], int n )
-//{
-//    if( x <= 0 )  return a[0];
-//    if( x >= n - 1 )  return a[n-1];
-//    int j = int(x);
-//    return a[j] + (x - j) * (a[j+1] - a[j]);
-//}
-//
-//// linear interpolate array a[] -> array b[]
-//void inter1parray( float a[], int n, float b[], int m )
-//{
-//    float step = float( n - 1 ) / (m - 1);
-//    for( int j = 0; j < m; j ++ ){
-//        b[j] = interp1( j*step, a, n );
-//    }
-//}
-
 void WaterFall::interpolate(const double *in, size_t in_ln, double *out, size_t out_ln) {
     double step = (double) in_ln / (double) out_ln;
 
@@ -116,9 +99,9 @@ void WaterFall::interpolate(const double *in, size_t in_ln, double *out, size_t 
             double coef = 1;
 
             if (j == first)
-                coef -= (start - first);
+                coef = 1 - (start - first);
             else if (j == last)
-                coef -= (end - (last - 1));
+                coef = (end - last);
 
             v += in[j] * coef;
         }
