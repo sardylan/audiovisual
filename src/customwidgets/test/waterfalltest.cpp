@@ -76,7 +76,7 @@ void CustomWidgetsWaterfallTest::testInterpolationOddSize() {
     const double in[]{1, 2, 3, 4, 5, 6, 7, 8};
     size_t in_ln = 8;
 
-    double expected[]{1.375,2.375};
+    double expected[]{1.125, 4.375, 5, 7, 8};
 
     size_t actual_ln = 5;
     double actual[5];

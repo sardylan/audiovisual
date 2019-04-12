@@ -101,33 +101,29 @@ void WaterFall::cleanDataList() {
 //}
 
 void WaterFall::interpolate(const double *in, size_t in_ln, double *out, size_t out_ln) {
-    size_t i;
-    size_t j;
-    size_t offset;
-    double step;
-    double v;
-    double r;
+    double step = (double) in_ln / (double) out_ln;
 
-    step = (double) in_ln / (double) out_ln;
-    r = 0;
+    for (size_t i = 0; i < out_ln; i++) {
+        double start = step * i;
+        double end = step * (i + 1);
 
-    for (i = 0; i < out_ln; i++) {
-        v = 0;
-        offset = ((int) step) * i;
+        int first = (int) start;
+        int last = (int) end;
 
-        if (i > 0 && r > 0) {
-            v += *(in + offset - 1) * (1 - r);
+        double v = 0;
+
+        for (int j = first; j <= last; j++) {
+            double coef = 1;
+
+            if (j == first)
+                coef -= (start - first);
+            else if (j == last)
+                coef -= (end - (last - 1));
+
+            v += in[j] * coef;
         }
-
-        for (j = 0; j < (int) step; j++) {
-            v += *(in + offset + j);
-        }
-
-        r = step - j;
-        v += *(in + j) * r;
 
         v /= step;
-
         *(out + i) = v;
     }
 }
