@@ -30,18 +30,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     vuMeter = new VUMeter(this);
     initVUMeter();
 
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, [=]() {
-        int val = qrand() % 1024;
-        vuMeter->setValue(val);
-    });
-    timer->setSingleShot(false);
-    timer->start(10);
+    waterfall = new Waterfall(this);
+    initWaterfall();
 
     vuMeter->setMin(0);
     vuMeter->setMax(1024);
     vuMeter->setWarning(512);
     vuMeter->setAlert(900);
+
+    waterfall->setDataMax(1024);
+    waterfall->setDataSize(512);
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, [=]() {
+        int val = qrand() % 1024;
+        vuMeter->setValue(val);
+
+        QList<double> data;
+        for (int i = 0; i < 512; i++)
+            data.append(val);
+        waterfall->addData(data);
+    });
+    timer->setSingleShot(false);
+    timer->start(10);
 }
 
 MainWindow::~MainWindow() {
@@ -50,4 +61,8 @@ MainWindow::~MainWindow() {
 
 void MainWindow::initVUMeter() {
     ui->vuMeterStackedWidget->addWidget(vuMeter);
+}
+
+void MainWindow::initWaterfall() {
+    ui->waterfallWidget->addWidget(waterfall);
 }

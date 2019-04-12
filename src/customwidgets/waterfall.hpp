@@ -27,25 +27,31 @@
 
 #define WATERFALL_DATA_SIZE 2048
 
-class WaterFall : public QOpenGLWidget {
+class Waterfall : public QOpenGLWidget {
 Q_OBJECT
 
 public:
-    explicit WaterFall(QWidget *parent = nullptr);
+    explicit Waterfall(QWidget *parent = nullptr);
 
-    ~WaterFall() override;
+    ~Waterfall() override;
 
     static void resample(const double *in, size_t in_ln, double *out, size_t out_ln);
 
 public slots:
 
-    void addData(QList<quint8> data);
+    void setDataMax(double value);
+
+    void setDataSize(size_t value);
+
+    void addData(const QList<double>& value);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    QList<QList<quint8>> dataList;
+    double dataMax;
+    size_t dataSize;
+    QList<QList<double>> dataList;
 
     void cleanDataList();
 };

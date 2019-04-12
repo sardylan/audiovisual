@@ -24,13 +24,15 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-WaterFall::WaterFall(QWidget *parent) : QOpenGLWidget(parent) {
+Waterfall::Waterfall(QWidget *parent) : QOpenGLWidget(parent) {
+    dataMax = 1;
+    dataSize = 512;
     setAutoFillBackground(false);
 }
 
-WaterFall::~WaterFall() = default;
+Waterfall::~Waterfall() = default;
 
-void WaterFall::paintEvent(QPaintEvent *event) {
+void Waterfall::paintEvent(QPaintEvent *event) {
     QBrush whiteBrush = QBrush(Qt::white);
     QBrush blackBrush = QBrush(Qt::black);
 
@@ -43,23 +45,24 @@ void WaterFall::paintEvent(QPaintEvent *event) {
     int width = painter.window().width();
     int height = painter.window().height();
 
-//    double pixelWidth = interval / width;
-//
-//    double valueThreshold = value / pixelWidth;
-//    double warningThreshold = warning / pixelWidth;
-//    double alertThreshold = alert / pixelWidth;
-
     for (int y = 0; y < height && y < dataList.size(); y++) {
-        QList<quint8> line = dataList.at(y);
+        QList<double> lineList = dataList.at((dataList.size() - 1) - y);
 
+        double rowData[width];
+        resample(lineList.toVector().constData(), lineList.size(), rowData, width);
 
         for (int x = 0; x < width; x++) {
+            int level = (int) (255 * (rowData[x] / dataMax));
+            if (level < 0)
+                level = 0;
+            if (level > 255)
+                level = 255;
+
             QPen pen;
-            pen.setColor(QColor::fromRgb(0, 0, 0));
+            pen.setColor(QColor::fromRgb(level, level, level));
             pen.setWidth(1);
 
             painter.setPen(pen);
-            painter.drawLine(x, 0, x, height);
             painter.drawPoint(x, y);
         }
     }
@@ -67,17 +70,22 @@ void WaterFall::paintEvent(QPaintEvent *event) {
     painter.end();
 }
 
-void WaterFall::addData(QList<quint8> data) {
-    if (data.length() != WATERFALL_DATA_SIZE)
-        return;
+void Waterfall::setDataMax(double value) {
+    Waterfall::dataMax = value;
+}
 
-    dataList.append(data);
+void Waterfall::setDataSize(size_t value) {
+    Waterfall::dataSize = value;
+    dataList.clear();
+}
+
+void Waterfall::addData(const QList<double> &value) {
+    dataList.append(value);
     cleanDataList();
-
     update();
 }
 
-void WaterFall::cleanDataList() {
+void Waterfall::cleanDataList() {
     QPainter painter;
     painter.begin(this);
 
@@ -87,7 +95,7 @@ void WaterFall::cleanDataList() {
     painter.end();
 }
 
-void WaterFall::resample(const double *in, size_t in_ln, double *out, size_t out_ln) {
+void Waterfall::resample(const double *in, size_t in_ln, double *out, size_t out_ln) {
     double step = (double) in_ln / (double) out_ln;
 
     for (size_t i = 0; i < out_ln; i++) {

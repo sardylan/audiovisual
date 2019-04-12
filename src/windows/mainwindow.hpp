@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <customwidgets/vumeter.hpp>
+#include <customwidgets/waterfall.hpp>
 
 namespace Ui {
     class MainWindow;
@@ -37,15 +38,18 @@ Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    ~MainWindow();
+    ~MainWindow() override;
 
 private:
     Ui::MainWindow *ui;
 
     VUMeter *vuMeter;
+    Waterfall *waterfall;
     QTimer *timer;
 
     void initVUMeter();
+
+    void initWaterfall();
 };
 
 #endif
