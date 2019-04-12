@@ -32,6 +32,7 @@ WaterFall::~WaterFall() = default;
 
 void WaterFall::paintEvent(QPaintEvent *event) {
     QBrush whiteBrush = QBrush(Qt::white);
+    QBrush blackBrush = QBrush(Qt::black);
 
     QPainter painter;
     painter.begin(this);
@@ -42,22 +43,25 @@ void WaterFall::paintEvent(QPaintEvent *event) {
     int width = painter.window().width();
     int height = painter.window().height();
 
-    for (int x = 0; x < width; x++) {
-        QPen pen;
+//    double pixelWidth = interval / width;
+//
+//    double valueThreshold = value / pixelWidth;
+//    double warningThreshold = warning / pixelWidth;
+//    double alertThreshold = alert / pixelWidth;
 
-//        if (x > valueThreshold)
-//            pen = QPen(Qt::white);
-//        else if (x < warningThreshold)
-//            pen = QPen(Qt::green);
-//        else if (x < alertThreshold)
-//            pen = QPen(Qt::yellow);
-//        else
-//            pen = QPen(Qt::red);
+    for (int y = 0; y < height && y < dataList.size(); y++) {
+        QList<quint8> line = dataList.at(y);
 
-        pen.setWidth(0);
 
-        painter.setPen(pen);
-        painter.drawLine(x, 0, x, height);
+        for (int x = 0; x < width; x++) {
+            QPen pen;
+            pen.setColor(QColor::fromRgb(0, 0, 0));
+            pen.setWidth(1);
+
+            painter.setPen(pen);
+            painter.drawLine(x, 0, x, height);
+            painter.drawPoint(x, y);
+        }
     }
 
     painter.end();
