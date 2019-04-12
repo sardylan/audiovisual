@@ -83,7 +83,7 @@ void WaterFall::cleanDataList() {
     painter.end();
 }
 
-void WaterFall::interpolate(const double *in, size_t in_ln, double *out, size_t out_ln) {
+void WaterFall::resample(const double *in, size_t in_ln, double *out, size_t out_ln) {
     double step = (double) in_ln / (double) out_ln;
 
     for (size_t i = 0; i < out_ln; i++) {

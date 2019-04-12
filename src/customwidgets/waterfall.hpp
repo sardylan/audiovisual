@@ -35,7 +35,7 @@ public:
 
     ~WaterFall() override;
 
-    static void interpolate(const double *in, size_t in_ln, double *out, size_t out_ln);
+    static void resample(const double *in, size_t in_ln, double *out, size_t out_ln);
 
 public slots:
 
