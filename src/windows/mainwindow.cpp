@@ -38,18 +38,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     vuMeter->setWarning(512);
     vuMeter->setAlert(900);
 
+    val = 0;
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [=]() {
-        int val = qrand() % 1024;
         vuMeter->setValue(val);
 
         QList<double> data;
         for (int i = 0; i < 512; i++)
             data.append(val);
         waterfall->addData(data);
+
+        val += 1;
+        val %= 1024;
     });
     timer->setSingleShot(false);
-    timer->start(10);
+    timer->start(1);
 }
 
 MainWindow::~MainWindow() {

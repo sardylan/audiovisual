@@ -47,6 +47,8 @@ private:
     Waterfall *waterfall;
     QTimer *timer;
 
+    int val;
+
     void initVUMeter();
 
     void initWaterfall();
