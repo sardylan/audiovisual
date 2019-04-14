@@ -22,80 +22,64 @@
 #include "waterfall.hpp"
 #include "utility.hpp"
 
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 #include <QDebug>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QRgb>
 
 Waterfall::Waterfall(QWidget *parent) : QOpenGLWidget(parent) {
-    setAutoFillBackground(false);
+    width = 0;
+    height = 0;
 }
 
 Waterfall::~Waterfall() = default;
 
-void Waterfall::paintEvent(QPaintEvent *event) {
-    QBrush whiteBrush = QBrush(Qt::white);
-    QBrush blackBrush = QBrush(Qt::black);
+void Waterfall::initializeGL() {
+    glClearColor(0, 0, 0, 1);
+}
 
-    QPainter painter;
-    painter.begin(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(event->rect(), whiteBrush);
-    painter.translate(0, 0);
+void Waterfall::paintGL() {
+    if (width == 0 || height == 0)
+        return;
 
-    int width = painter.window().width();
-    int height = painter.window().height();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glBegin(GL_POINTS);
 
     for (int y = 0; y < height && y < dataList.size(); y++) {
-        QList<QColor> lineList = dataList.at((dataList.size() - 1) - y);
+        QList<double> lineList = dataList.at((dataList.size() - 1) - y);
 
-        for (int x = 0; x < width && x < lineList.size(); x++) {
-            QPen pen;
-            pen.setColor(lineList.at(x));
-            pen.setWidth(1);
+        for (int x = 0; x < lineList.size(); x++) {
+            float posX = (((float) x + 1) / ((float) lineList.size() / 2)) - 1;
+            float posY = 1 - (((float) y + 1) / ((float) height / 2));
 
-            painter.setPen(pen);
-            painter.drawPoint(x, y);
+            double value = lineList.at(x);
+            QColor qColor = computeRgbValue(value);
+            glColor3f(qColor.redF(), qColor.greenF(), qColor.blueF());
+            glVertex3f(posX, posY, 0);
         }
     }
 
-    painter.end();
+    glEnd();
+}
+
+void Waterfall::resizeGL(int w, int h) {
+    width = w;
+    height = h;
 }
 
 void Waterfall::addData(const QList<double> &value) {
-    QPainter painter;
-    painter.begin(this);
-    int width = painter.window().width();
-    painter.end();
-
-    double rowData[width];
-    CustomWidgetsUtility::resample(value.toVector().constData(), value.size(), rowData, width);
-
-    QList<QColor> colorLine;
-
-    for (const double &item : rowData) {
-        QColor color = computeRgbValue(item);
-        colorLine.append(color);
-    }
-
-    dataList.append(colorLine);
+    dataList.append(value);
     cleanDataList();
     update();
 }
 
 void Waterfall::cleanDataList() {
-    QPainter painter;
-    painter.begin(this);
-    int height = painter.window().height();
-    painter.end();
-
     while (dataList.length() > height)
         dataList.removeFirst();
-}
-
-void Waterfall::resizeEvent(QResizeEvent *e) {
-    dataList.clear();
-    QOpenGLWidget::resizeEvent(e);
 }
 
 QColor Waterfall::computeRgbValue(int value) {
