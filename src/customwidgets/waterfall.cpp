@@ -41,6 +41,11 @@ void Waterfall::initializeGL() {
     glClearColor(0, 0, 0, 1);
 }
 
+void Waterfall::resizeGL(int w, int h) {
+    width = w;
+    height = h;
+}
+
 void Waterfall::paintGL() {
     if (width == 0 || height == 0)
         return;
@@ -64,11 +69,6 @@ void Waterfall::paintGL() {
     }
 
     glEnd();
-}
-
-void Waterfall::resizeGL(int w, int h) {
-    width = w;
-    height = h;
 }
 
 void Waterfall::addData(const QList<double> &value) {

@@ -42,15 +42,12 @@ public slots:
     void addData(const QList<double> &value);
 
 protected:
-//    void paintEvent(QPaintEvent *event) override;
-
-//    void resizeEvent(QResizeEvent *e) override;
 
     void initializeGL() override;
 
-    void paintGL() override;
-
     void resizeGL(int w, int h) override;
+
+    void paintGL() override;
 
 private:
     int width;
