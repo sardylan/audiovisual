@@ -88,42 +88,98 @@ void VUMeter::updateInterval() {
     interval = max - min;
 }
 
-void VUMeter::paintEvent(QPaintEvent *event) {
-    QBrush whiteBrush = QBrush(Qt::white);
-    QBrush blackBrush = QBrush(Qt::black);
+void VUMeter::initializeGL() {
+    glClearColor(1, 1, 1, 1);
+    glShadeModel(GL_FLAT);
+}
 
-    QPainter painter;
-    painter.begin(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(event->rect(), whiteBrush);
-    painter.translate(0, 0);
+void VUMeter::resizeGL(int w, int h) {
+    width = w;
+    height = h;
+}
 
-    int width = painter.window().width();
-    int height = painter.window().height();
+void VUMeter::paintGL() {
+    if (width == 0 || height == 0)
+        return;
 
-    double pixelWidth = interval / width;
+    float halfInterval = interval / 2;
+    float valueThreshold = (value / halfInterval) - 1;
+    float warningThreshold = (warning / halfInterval) - 1;
+    float alertThreshold = (alert / halfInterval) - 1;
 
-    double valueThreshold = value / pixelWidth;
-    double warningThreshold = warning / pixelWidth;
-    double alertThreshold = alert / pixelWidth;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (int x = 0; x < width; x++) {
-        QPen pen;
+    glBegin(GL_QUAD_STRIP);
 
-        if (x > valueThreshold)
-            pen = QPen(Qt::white);
-        else if (x < warningThreshold)
-            pen = QPen(Qt::green);
-        else if (x < alertThreshold)
-            pen = QPen(Qt::yellow);
-        else
-            pen = QPen(Qt::red);
-
-        pen.setWidth(0);
-
-        painter.setPen(pen);
-        painter.drawLine(x, 0, x, height);
+    if (valueThreshold < warningThreshold) {
+        glColor3f(0, 1, 0);
+        glVertex3f(-1, -1, 0);
+        glVertex3f(-1, 1, 0);
+        glVertex3f(valueThreshold, -1, 0);
+        glVertex3f(valueThreshold, 1, 0);
+    } else if (valueThreshold < alertThreshold) {
+        glColor3f(0, 1, 0);
+        glVertex3f(-1, -1, 0);
+        glVertex3f(-1, 1, 0);
+        glVertex3f(warningThreshold, -1, 0);
+        glVertex3f(warningThreshold, 1, 0);
+        glColor3f(1, 1, 0);
+        glVertex3f(valueThreshold, -1, 0);
+        glVertex3f(valueThreshold, 1, 0);
+    } else {
+        glColor3f(0, 1, 0);
+        glVertex3f(-1, -1, 0);
+        glVertex3f(-1, 1, 0);
+        glVertex3f(warningThreshold, -1, 0);
+        glVertex3f(warningThreshold, 1, 0);
+        glColor3f(1, 1, 0);
+        glVertex3f(alertThreshold, -1, 0);
+        glVertex3f(alertThreshold, 1, 0);
+        glColor3f(1, 0, 0);
+        glVertex3f(valueThreshold, -1, 0);
+        glVertex3f(valueThreshold, 1, 0);
     }
 
-    painter.end();
+    glEnd();
+
 }
+
+//void VUMeter::paintEvent(QPaintEvent *event) {
+//    QBrush whiteBrush = QBrush(Qt::white);
+//    QBrush blackBrush = QBrush(Qt::black);
+//
+//    QPainter painter;
+//    painter.begin(this);
+//    painter.setRenderHint(QPainter::Antialiasing);
+//    painter.fillRect(event->rect(), whiteBrush);
+//    painter.translate(0, 0);
+//
+//    int width = painter.window().width();
+//    int height = painter.window().height();
+//
+//    double pixelWidth = interval / width;
+//
+//    double valueThreshold = value / pixelWidth;
+//    double warningThreshold = warning / pixelWidth;
+//    double alertThreshold = alert / pixelWidth;
+//
+//    for (int x = 0; x < width; x++) {
+//        QPen pen;
+//
+//        if (x > valueThreshold)
+//            pen = QPen(Qt::white);
+//        else if (x < warningThreshold)
+//            pen = QPen(Qt::green);
+//        else if (x < alertThreshold)
+//            pen = QPen(Qt::yellow);
+//        else
+//            pen = QPen(Qt::red);
+//
+//        pen.setWidth(0);
+//
+//        painter.setPen(pen);
+//        painter.drawLine(x, 0, x, height);
+//    }
+//
+//    painter.end();
+//}

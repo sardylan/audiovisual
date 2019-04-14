@@ -56,9 +56,18 @@ public slots:
     void setValue(double value);
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
+//    void paintEvent(QPaintEvent *event) override;
+
+    void initializeGL() override;
+
+    void resizeGL(int w, int h) override;
+
+    void paintGL() override;
 
 private:
+    int width;
+    int height;
+
     double min;
     double max;
     double warning;
