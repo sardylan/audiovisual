@@ -39,6 +39,7 @@ Waterfall::~Waterfall() = default;
 
 void Waterfall::initializeGL() {
     glClearColor(0, 0, 0, 1);
+    glShadeModel(GL_FLAT);
 }
 
 void Waterfall::resizeGL(int w, int h) {
