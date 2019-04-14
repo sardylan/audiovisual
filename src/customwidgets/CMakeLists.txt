@@ -34,15 +34,3 @@ target_link_libraries(testutility
 
 add_test(TestUtility
         testutility -o testresult-testutility.xml,xunitxml)
-
-add_executable(testwaterfall
-        test/waterfalltest.cpp
-        test/waterfalltest.hpp)
-
-target_link_libraries(testwaterfall
-        Qt5::Core
-        Qt5::Test
-        customwidgets)
-
-add_test(TestWaterfall
-        testwaterfall -o testresult-testwaterfall.xml,xunitxml)

@@ -32,6 +32,16 @@ private slots:
 
     void testComputeRow();
 
+    void testInterpolationEqual();
+
+    void testInterpolationHalfSize();
+
+    void testInterpolationQuarterSize();
+
+    void testInterpolationOddSizeSmaller();
+
+    void testInterpolationOddSizeGreater();
+
 };
 
 #endif

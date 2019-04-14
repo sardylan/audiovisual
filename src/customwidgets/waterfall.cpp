@@ -20,13 +20,14 @@
  */
 
 #include "waterfall.hpp"
+#include "utility.hpp"
 
+#include <QDebug>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QRgb>
 
 Waterfall::Waterfall(QWidget *parent) : QOpenGLWidget(parent) {
-    dataMax = 1;
-    dataSize = 512;
     setAutoFillBackground(false);
 }
 
@@ -46,20 +47,11 @@ void Waterfall::paintEvent(QPaintEvent *event) {
     int height = painter.window().height();
 
     for (int y = 0; y < height && y < dataList.size(); y++) {
-        QList<double> lineList = dataList.at((dataList.size() - 1) - y);
+        QList<QColor> lineList = dataList.at((dataList.size() - 1) - y);
 
-        double rowData[width];
-        resample(lineList.toVector().constData(), lineList.size(), rowData, width);
-
-        for (int x = 0; x < width; x++) {
-            int level = (int) (255 * (rowData[x] / dataMax));
-            if (level < 0)
-                level = 0;
-            if (level > 255)
-                level = 255;
-
+        for (int x = 0; x < width && x < lineList.size(); x++) {
             QPen pen;
-            pen.setColor(QColor::fromRgb(level, level, level));
+            pen.setColor(lineList.at(x));
             pen.setWidth(1);
 
             painter.setPen(pen);
@@ -70,17 +62,23 @@ void Waterfall::paintEvent(QPaintEvent *event) {
     painter.end();
 }
 
-void Waterfall::setDataMax(double value) {
-    Waterfall::dataMax = value;
-}
-
-void Waterfall::setDataSize(size_t value) {
-    Waterfall::dataSize = value;
-    dataList.clear();
-}
-
 void Waterfall::addData(const QList<double> &value) {
-    dataList.append(value);
+    QPainter painter;
+    painter.begin(this);
+    int width = painter.window().width();
+    painter.end();
+
+    double rowData[width];
+    CustomWidgetsUtility::resample(value.toVector().constData(), value.size(), rowData, width);
+
+    QList<QColor> colorLine;
+
+    for (const double &item : rowData) {
+        QColor color = computeRgbValue(item);
+        colorLine.append(color);
+    }
+
+    dataList.append(colorLine);
     cleanDataList();
     update();
 }
@@ -88,37 +86,53 @@ void Waterfall::addData(const QList<double> &value) {
 void Waterfall::cleanDataList() {
     QPainter painter;
     painter.begin(this);
-
-    while (dataList.length() > painter.window().height())
-        dataList.removeFirst();
-
+    int height = painter.window().height();
     painter.end();
+
+    while (dataList.length() > height)
+        dataList.removeFirst();
 }
 
-void Waterfall::resample(const double *in, size_t in_ln, double *out, size_t out_ln) {
-    double step = (double) in_ln / (double) out_ln;
+void Waterfall::resizeEvent(QResizeEvent *e) {
+    dataList.clear();
+    QOpenGLWidget::resizeEvent(e);
+}
 
-    for (size_t i = 0; i < out_ln; i++) {
-        double start = step * i;
-        double end = step * (i + 1);
+QColor Waterfall::computeRgbValue(int value) {
+    int v = value;
+    if (v < 0)
+        v = 0;
+    if (v > CUSTOMWIDGETS_WATERFALL_DATA_MAX)
+        v = CUSTOMWIDGETS_WATERFALL_DATA_MAX;
 
-        int first = (int) start;
-        int last = (int) end;
+    int r = 255;
+    int g = 0;
+    int b = 255;
 
-        double v = 0;
-
-        for (int j = first; j <= last; j++) {
-            double coef = 1;
-
-            if (j == first)
-                coef = 1 - (start - first);
-            else if (j == last)
-                coef = (end - last);
-
-            v += in[j] * coef;
-        }
-
-        v /= step;
-        *(out + i) = v;
+    if (v >= 0 && v < 256) {
+        r = 0;
+        g = 0;
+        b = v;
+    } else if (v >= 256 && v < 512) {
+        int k = v - 256;
+        r = k;
+        g = k;
+        b = 255 - k;
+    } else if (v >= 512 && v < 768) {
+        int k = v - 512;
+        r = 255;
+        g = 255 - k;
+        b = 0;
+    } else if (v >= 768 && v < CUSTOMWIDGETS_WATERFALL_DATA_MAX) {
+        int k = v - 768;
+        r = 255;
+        g = k;
+        b = k;
     }
+
+    return QColor::fromRgb(r, g, b);
+}
+
+QColor Waterfall::computeRgbValue(double value) {
+    return computeRgbValue((int) value);
 }

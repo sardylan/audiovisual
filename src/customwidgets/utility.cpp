@@ -26,3 +26,31 @@ QList<quint8> CustomWidgetsUtility::computeRow(QList<double> input) {
 
     return output;
 }
+
+void CustomWidgetsUtility::resample(const double *in, size_t in_ln, double *out, size_t out_ln) {
+    double step = (double) in_ln / (double) out_ln;
+
+    for (size_t i = 0; i < out_ln; i++) {
+        double start = step * i;
+        double end = step * (i + 1);
+
+        int first = (int) start;
+        int last = (int) end;
+
+        double v = 0;
+
+        for (int j = first; j <= last; j++) {
+            double coef = 1;
+
+            if (j == first)
+                coef = 1 - (start - first);
+            else if (j == last)
+                coef = (end - last);
+
+            v += in[j] * coef;
+        }
+
+        v /= step;
+        *(out + i) = v;
+    }
+}

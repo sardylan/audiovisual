@@ -24,8 +24,10 @@
 #define __AUDIOVISUAL__CUSTOMWIDGETS_WATERFALL__H
 
 #include <QOpenGLWidget>
+#include <QList>
+#include <QRgb>
 
-#define WATERFALL_DATA_SIZE 2048
+#define CUSTOMWIDGETS_WATERFALL_DATA_MAX 1024
 
 class Waterfall : public QOpenGLWidget {
 Q_OBJECT
@@ -35,25 +37,23 @@ public:
 
     ~Waterfall() override;
 
-    static void resample(const double *in, size_t in_ln, double *out, size_t out_ln);
-
 public slots:
 
-    void setDataMax(double value);
-
-    void setDataSize(size_t value);
-
-    void addData(const QList<double>& value);
+    void addData(const QList<double> &value);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
+    void resizeEvent(QResizeEvent *e) override;
+
 private:
-    double dataMax;
-    size_t dataSize;
-    QList<QList<double>> dataList;
+    QList<QList<QColor >> dataList;
 
     void cleanDataList();
+
+    static QColor computeRgbValue(int value);
+
+    static QColor computeRgbValue(double value);
 };
 
 #endif

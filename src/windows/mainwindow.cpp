@@ -38,9 +38,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     vuMeter->setWarning(512);
     vuMeter->setAlert(900);
 
-    waterfall->setDataMax(1024);
-    waterfall->setDataSize(512);
-
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [=]() {
         int val = qrand() % 1024;

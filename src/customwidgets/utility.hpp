@@ -31,6 +31,8 @@ public:
 
     static QList<quint8> computeRow(QList<double> input);
 
+    static void resample(const double *in, size_t in_ln, double *out, size_t out_ln);
+
 };
 
 #endif
