@@ -53,12 +53,13 @@ void Waterfall::paintGL() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBegin(GL_LINE_STRIP);
-
     for (int y = 0; y < height && y < dataList.size(); y++) {
         QList<double> lineList = dataList.at((dataList.size() - 1) - y);
 
         float posY = 1 - (((float) y + 1) / ((float) height / 2));
+
+        glBegin(GL_LINE_STRIP);
+
         glVertex3f(-1, posY, 0);
 
         for (int x = 0; x < lineList.size(); x++) {
@@ -69,9 +70,9 @@ void Waterfall::paintGL() {
             glColor3f(qColor.redF(), qColor.greenF(), qColor.blueF());
             glVertex3f(posX, posY, 0);
         }
-    }
 
-    glEnd();
+        glEnd();
+    }
 }
 
 void Waterfall::addData(const QList<double> &value) {
