@@ -53,14 +53,16 @@ void Waterfall::paintGL() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBegin(GL_POINTS);
+    glBegin(GL_LINE_STRIP);
 
     for (int y = 0; y < height && y < dataList.size(); y++) {
         QList<double> lineList = dataList.at((dataList.size() - 1) - y);
 
+        float posY = 1 - (((float) y + 1) / ((float) height / 2));
+        glVertex3f(-1, posY, 0);
+
         for (int x = 0; x < lineList.size(); x++) {
             float posX = (((float) x + 1) / ((float) lineList.size() / 2)) - 1;
-            float posY = 1 - (((float) y + 1) / ((float) height / 2));
 
             double value = lineList.at(x);
             QColor qColor = computeRgbValue(value);
@@ -94,21 +96,21 @@ QColor Waterfall::computeRgbValue(int value) {
     int g = 0;
     int b = 255;
 
-    if (v >= 0 && v < 256) {
+    if (v < 256) {
         r = 0;
         g = 0;
         b = v;
-    } else if (v >= 256 && v < 512) {
+    } else if (v < 512) {
         int k = v - 256;
         r = k;
         g = k;
         b = 255 - k;
-    } else if (v >= 512 && v < 768) {
+    } else if (v < 768) {
         int k = v - 512;
         r = 255;
         g = 255 - k;
         b = 0;
-    } else if (v >= 768 && v < CUSTOMWIDGETS_WATERFALL_DATA_MAX) {
+    } else if (v < CUSTOMWIDGETS_WATERFALL_DATA_MAX) {
         int k = v - 768;
         r = 255;
         g = k;
