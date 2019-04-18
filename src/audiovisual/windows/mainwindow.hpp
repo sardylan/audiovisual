@@ -25,8 +25,8 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include <customwidgets/vumeter.hpp>
-#include <customwidgets/waterfall.hpp>
+#include <vumeter.hpp>
+#include <waterfall.hpp>
 
 namespace Ui {
     class MainWindow;

@@ -28,7 +28,8 @@ target_link_libraries(customwidgets
         OpenGL::OpenGL
         OpenGL::GLU)
 
-target_include_directories(customwidgets PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(customwidgets
+        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(testutility
         test/utilitytest.cpp

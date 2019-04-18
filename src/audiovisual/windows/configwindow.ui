@@ -30,7 +30,14 @@
       <attribute name="title">
        <string>Audio</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1,0,1">
+       <item row="0" column="0">
+        <widget class="QLabel" name="audioDeviceLabel">
+         <property name="text">
+          <string>Device</string>
+         </property>
+        </widget>
+       </item>
        <item row="2" column="0">
         <widget class="QLabel" name="audioSamplerateLabel">
          <property name="text">
@@ -38,15 +45,15 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="audioDeviceComboBox"/>
-       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="audioChannelsLabel">
          <property name="text">
           <string>Channels</string>
          </property>
         </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="AudioSamplerateComboBox"/>
        </item>
        <item row="1" column="1">
         <widget class="QComboBox" name="audioChannelsComboBox"/>
@@ -64,32 +71,30 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="audioDeviceLabel">
+       <item row="2" column="2">
+        <widget class="QLabel" name="audioSampleSizeLabel">
          <property name="text">
-          <string>Device</string>
+          <string>Sample size</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="AudioSamplerateComboBox"/>
+       <item row="2" column="3">
+        <widget class="QComboBox" name="audioSampleSizeComboBox"/>
        </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="audioQualityComboBox"/>
+       <item row="0" column="1" colspan="3">
+        <widget class="QComboBox" name="audioDeviceComboBox"/>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="audioQualityLabel">
+       <item row="1" column="2">
+        <widget class="QLabel" name="audioSampleTypeLabel">
          <property name="text">
-          <string>Quality</string>
+          <string>Sample type</string>
          </property>
         </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QComboBox" name="audioSampleTypeComboBox"/>
        </item>
       </layout>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Tab 2</string>
-      </attribute>
      </widget>
     </widget>
    </item>
