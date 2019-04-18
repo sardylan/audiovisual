@@ -3,7 +3,8 @@ find_package(Qt5 REQUIRED COMPONENTS
         Gui
         Svg
         Widgets
-        OpenGL)
+        OpenGL
+        Multimedia)
 
 configure_file(version.hpp.in version.hpp @ONLY)
 
@@ -25,4 +26,5 @@ target_link_libraries(audiovisual
         Qt5::Gui
         Qt5::Svg
         Qt5::Widgets
-        Qt5::OpenGL)
+        Qt5::OpenGL
+        Qt5::Multimedia)

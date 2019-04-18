@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>configWindow</class>
+ <class>ConfigWindow</class>
  <widget class="QDialog" name="configWindow">
   <property name="geometry">
    <rect>
@@ -39,7 +39,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="audioSamplerateLabel">
+        <widget class="QLabel" name="audioSampleRateLabel">
          <property name="text">
           <string>Sample rate</string>
          </property>
@@ -53,7 +53,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="AudioSamplerateComboBox"/>
+        <widget class="QComboBox" name="audioSampleRateComboBox"/>
        </item>
        <item row="1" column="1">
         <widget class="QComboBox" name="audioChannelsComboBox"/>

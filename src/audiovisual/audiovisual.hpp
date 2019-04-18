@@ -28,6 +28,7 @@
 #include <QApplication>
 
 #include <windows/mainwindow.hpp>
+#include <windows/configwindow.hpp>
 
 
 class AudioVisual : public QApplication {
@@ -44,8 +45,12 @@ public:
     int run();
 
 private:
+    ConfigWindow *configWindow;
     MainWindow *mainWindow;
 
+private slots:
+
+    void displayConfig();
 };
 
 #endif

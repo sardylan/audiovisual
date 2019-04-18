@@ -34,16 +34,23 @@ int main(int argc, char *argv[]) {
 
 AudioVisual::AudioVisual(int &argc, char **argv) : QApplication(argc, argv) {
     mainWindow = new MainWindow();
+    configWindow = new ConfigWindow();
 }
 
 AudioVisual::~AudioVisual() {
+    delete configWindow;
     delete mainWindow;
 }
 
 void AudioVisual::prepare() {
-    mainWindow->show();
+    displayConfig();
+//    mainWindow->show();
 }
 
 int AudioVisual::run() {
     return QApplication::exec();
+}
+
+void AudioVisual::displayConfig() {
+    configWindow->exec();
 }
