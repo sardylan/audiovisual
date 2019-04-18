@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>configWindow</class>
+ <widget class="QDialog" name="configWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>480</width>
+    <height>270</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="3" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="audioTab">
+      <attribute name="title">
+       <string>Audio</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
+       <item row="2" column="0">
+        <widget class="QLabel" name="audioSamplerateLabel">
+         <property name="text">
+          <string>Sample rate</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="audioDeviceComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="audioChannelsLabel">
+         <property name="text">
+          <string>Channels</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="audioChannelsComboBox"/>
+       </item>
+       <item row="4" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="audioDeviceLabel">
+         <property name="text">
+          <string>Device</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="AudioSamplerateComboBox"/>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="audioQualityComboBox"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="audioQualityLabel">
+         <property name="text">
+          <string>Quality</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Tab 2</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
