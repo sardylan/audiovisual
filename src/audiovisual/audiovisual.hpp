@@ -50,7 +50,7 @@ private:
 
 private slots:
 
-    void displayConfig();
+    void showConfiguration();
 };
 
 #endif

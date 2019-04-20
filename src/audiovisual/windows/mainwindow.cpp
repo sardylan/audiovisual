@@ -27,17 +27,39 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    status = Status::getInstance();
+    config = Config::getInstance();
+
+    signalConnect();
+    initUi();
+
+    startTimer();
+}
+
+MainWindow::~MainWindow() {
+    delete ui;
+}
+
+void MainWindow::signalConnect() {
+    connect(ui->actionFileExit, &QAction::triggered, this, &MainWindow::close);
+    connect(ui->actionConfig, &QAction::triggered, this, &MainWindow::showConfiguration);
+}
+
+void MainWindow::initUi() {
     vuMeter = new VUMeter(this);
-    initVUMeter();
+    ui->vuMeterStackedWidget->addWidget(vuMeter);
 
     waterfall = new Waterfall(this);
-    initWaterfall();
+    ui->waterfallWidget->addWidget(waterfall);
 
     vuMeter->setMin(0);
     vuMeter->setMax(1024);
     vuMeter->setWarning(512);
     vuMeter->setAlert(900);
 
+}
+
+void MainWindow::startTimer() {
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [=]() {
         vuMeter->setValue(qrand() % 1024);
@@ -49,16 +71,4 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     });
     timer->setSingleShot(false);
     timer->start(1);
-}
-
-MainWindow::~MainWindow() {
-    delete ui;
-}
-
-void MainWindow::initVUMeter() {
-    ui->vuMeterStackedWidget->addWidget(vuMeter);
-}
-
-void MainWindow::initWaterfall() {
-    ui->waterfallWidget->addWidget(waterfall);
 }

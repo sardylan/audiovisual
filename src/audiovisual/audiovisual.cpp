@@ -43,15 +43,15 @@ AudioVisual::~AudioVisual() {
 }
 
 void AudioVisual::prepare() {
-    displayConfig();
-//    mainWindow->show();
+    connect(mainWindow, &MainWindow::showConfiguration, this, &AudioVisual::showConfiguration);
 }
 
 int AudioVisual::run() {
+    mainWindow->show();
+
     return QApplication::exec();
 }
 
-void AudioVisual::displayConfig() {
-//    configWindow->exec();
-    configWindow->show();
+void AudioVisual::showConfiguration() {
+    configWindow->exec();
 }

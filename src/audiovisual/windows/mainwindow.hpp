@@ -27,6 +27,8 @@
 #include <QTimer>
 #include <vumeter.hpp>
 #include <waterfall.hpp>
+#include <status.hpp>
+#include <config/config.hpp>
 
 namespace Ui {
     class MainWindow;
@@ -42,14 +44,22 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    Status *status;
+    Config *config;
 
     VUMeter *vuMeter;
     Waterfall *waterfall;
     QTimer *timer;
 
-    void initVUMeter();
+    void signalConnect();
 
-    void initWaterfall();
+    void initUi();
+
+    void startTimer();
+
+signals:
+
+    void showConfiguration();
 };
 
 #endif
