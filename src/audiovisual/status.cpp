@@ -40,5 +40,6 @@ bool Status::isRunning() const {
 
 void Status::setRunning(bool value) {
     Status::running = value;
+    emit updateRunning(value);
 }
 

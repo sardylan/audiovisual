@@ -27,13 +27,11 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    status = Status::getInstance();
-    config = Config::getInstance();
+    vuMeter = new VUMeter(this);
+    waterfall = new Waterfall(this);
 
     signalConnect();
     initUi();
-
-    startTimer();
 }
 
 MainWindow::~MainWindow() {
@@ -43,32 +41,28 @@ MainWindow::~MainWindow() {
 void MainWindow::signalConnect() {
     connect(ui->actionFileExit, &QAction::triggered, this, &MainWindow::close);
     connect(ui->actionConfig, &QAction::triggered, this, &MainWindow::showConfiguration);
+    connect(ui->actionRun, &QAction::triggered, this, &MainWindow::toggleRunning);
 }
 
 void MainWindow::initUi() {
-    vuMeter = new VUMeter(this);
     ui->vuMeterStackedWidget->addWidget(vuMeter);
-
-    waterfall = new Waterfall(this);
     ui->waterfallWidget->addWidget(waterfall);
 
     vuMeter->setMin(0);
     vuMeter->setMax(1024);
     vuMeter->setWarning(512);
     vuMeter->setAlert(900);
+}
+
+void MainWindow::updateRunning(bool value) {
+    ui->actionRun->setChecked(value);
 
 }
 
-void MainWindow::startTimer() {
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, [=]() {
-        vuMeter->setValue(qrand() % 1024);
+void MainWindow::updateVuMeter(const double &value) {
+    vuMeter->setValue(value);
+}
 
-        QList<double> data;
-        for (int i = 0; i < 1024; i++)
-            data.append(qrand() % 1024);
-        waterfall->addData(data);
-    });
-    timer->setSingleShot(false);
-    timer->start(1);
+void MainWindow::updateWaterfall(const QList<double> &data) {
+    waterfall->addData(data);
 }

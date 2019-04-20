@@ -42,24 +42,29 @@ public:
 
     ~MainWindow() override;
 
+public slots:
+
+    void updateRunning(bool value);
+
+    void updateVuMeter(const double &value);
+
+    void updateWaterfall(const QList<double> &data);
+
 private:
     Ui::MainWindow *ui;
-    Status *status;
-    Config *config;
 
     VUMeter *vuMeter;
     Waterfall *waterfall;
-    QTimer *timer;
 
     void signalConnect();
 
     void initUi();
 
-    void startTimer();
-
 signals:
 
     void showConfiguration();
+
+    void toggleRunning(bool value);
 };
 
 #endif

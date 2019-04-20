@@ -45,12 +45,23 @@ public:
     int run();
 
 private:
+    Status *status;
+    Config *config;
+
     ConfigWindow *configWindow;
     MainWindow *mainWindow;
+
+    QTimer *timer;
+
+    void startTimer();
+
+    void stopTimer();
 
 private slots:
 
     void showConfiguration();
+
+    void toggleRun(bool value);
 };
 
 #endif

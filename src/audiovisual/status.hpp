@@ -23,7 +23,10 @@
 #ifndef __AUDIOVISUAL__STATUS__H
 #define __AUDIOVISUAL__STATUS__H
 
-class Status {
+#include <QtCore/QObject>
+
+class Status : public QObject {
+Q_OBJECT
 
 private:
     Status();
@@ -38,6 +41,10 @@ public:
     bool isRunning() const;
 
     void setRunning(bool value);
+
+signals:
+
+    void updateRunning(bool value);
 };
 
 #endif

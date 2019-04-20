@@ -33,8 +33,13 @@ int main(int argc, char *argv[]) {
 }
 
 AudioVisual::AudioVisual(int &argc, char **argv) : QApplication(argc, argv) {
+    status = Status::getInstance();
+    config = Config::getInstance();
+
     mainWindow = new MainWindow();
     configWindow = new ConfigWindow();
+
+    timer = new QTimer(this);
 }
 
 AudioVisual::~AudioVisual() {
@@ -43,7 +48,21 @@ AudioVisual::~AudioVisual() {
 }
 
 void AudioVisual::prepare() {
+    connect(status, &Status::updateRunning, mainWindow, &MainWindow::updateRunning);
+
     connect(mainWindow, &MainWindow::showConfiguration, this, &AudioVisual::showConfiguration);
+    connect(mainWindow, &MainWindow::toggleRunning, this, &AudioVisual::toggleRun);
+
+    connect(timer, &QTimer::timeout, [=]() {
+        mainWindow->updateVuMeter(qrand() % 1024);
+
+        QList<double> data;
+        for (int i = 0; i < 1024; i++)
+            data.append(qrand() % 1024);
+        mainWindow->updateWaterfall(data);
+    });
+
+    timer->setSingleShot(false);
 }
 
 int AudioVisual::run() {
@@ -54,4 +73,22 @@ int AudioVisual::run() {
 
 void AudioVisual::showConfiguration() {
     configWindow->exec();
+}
+
+void AudioVisual::toggleRun(bool value) {
+    if (value) {
+        status->setRunning(true);
+        startTimer();
+    } else {
+        status->setRunning(false);
+        stopTimer();
+    }
+}
+
+void AudioVisual::startTimer() {
+    timer->start(1);
+}
+
+void AudioVisual::stopTimer() {
+    timer->stop();
 }
