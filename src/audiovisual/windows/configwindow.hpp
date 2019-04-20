@@ -52,6 +52,8 @@ private:
 
     void save();
 
+    void checkStatus();
+
 private slots:
 
     void handleOK();

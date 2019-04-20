@@ -36,6 +36,7 @@ ConfigWindow::ConfigWindow(QWidget *parent) : QDialog(parent), ui(new Ui::Config
     signalConnect();
     initUi();
     load();
+    checkStatus();
 }
 
 ConfigWindow::~ConfigWindow() {
@@ -89,6 +90,16 @@ void ConfigWindow::save() {
     config->setAudioSampleType(ui->audioSampleTypeComboBox->currentData().value<QAudioFormat::SampleType>());
 
     ConfigManager::save();
+}
+
+void ConfigWindow::checkStatus() {
+    bool enabled = !status->isRunning();
+
+    ui->audioDeviceComboBox->setEnabled(enabled);
+    ui->audioChannelsComboBox->setEnabled(enabled);
+    ui->audioSampleRateComboBox->setEnabled(enabled);
+    ui->audioSampleSizeComboBox->setEnabled(enabled);
+    ui->audioSampleTypeComboBox->setEnabled(enabled);
 }
 
 void ConfigWindow::handleOK() {

@@ -31,5 +31,14 @@ Status *Status::getInstance() {
 }
 
 Status::Status() {
+    running = false;
+}
+
+bool Status::isRunning() const {
+    return running;
+}
+
+void Status::setRunning(bool value) {
+    Status::running = value;
 }
 

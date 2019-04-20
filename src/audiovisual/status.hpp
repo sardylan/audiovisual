@@ -30,8 +30,14 @@ private:
 
     static Status *instance;
 
+    bool running;
+
 public:
     static Status *getInstance();
+
+    bool isRunning() const;
+
+    void setRunning(bool value);
 };
 
 #endif
