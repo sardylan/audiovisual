@@ -29,6 +29,7 @@
 
 #include <windows/mainwindow.hpp>
 #include <windows/configwindow.hpp>
+#include <worker.hpp>
 
 
 class AudioVisual : public QApplication {
@@ -48,20 +49,21 @@ private:
     Status *status;
     Config *config;
 
+    AudioWorker *audioWorker;
+
     ConfigWindow *configWindow;
     MainWindow *mainWindow;
 
-    QTimer *timer;
+    double ggg;
 
-    void startTimer();
-
-    void stopTimer();
 
 private slots:
 
     void showConfiguration();
 
     void toggleRun(bool value);
+
+    void newAudioData(const QByteArray& data);
 };
 
 #endif

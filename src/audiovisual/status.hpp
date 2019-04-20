@@ -40,6 +40,8 @@ public:
 
     bool isRunning() const;
 
+public slots:
+
     void setRunning(bool value);
 
 signals:

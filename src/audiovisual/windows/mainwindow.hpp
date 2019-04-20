@@ -46,6 +46,8 @@ public slots:
 
     void updateRunning(bool value);
 
+    void updateVuMeterMax(const double &value);
+
     void updateVuMeter(const double &value);
 
     void updateWaterfall(const QList<double> &data);

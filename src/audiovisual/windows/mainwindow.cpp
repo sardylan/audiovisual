@@ -59,6 +59,13 @@ void MainWindow::updateRunning(bool value) {
 
 }
 
+void MainWindow::updateVuMeterMax(const double &value) {
+    vuMeter->setMin(0);
+    vuMeter->setWarning(value * .5);
+    vuMeter->setAlert(value * .75);
+    vuMeter->setMax(value);
+}
+
 void MainWindow::updateVuMeter(const double &value) {
     vuMeter->setValue(value);
 }

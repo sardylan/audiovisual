@@ -19,6 +19,9 @@
  *
  */
 
+#include <QDebug>
+#include <QtCore/QtMath>
+
 #include "audiovisual.hpp"
 
 int main(int argc, char *argv[]) {
@@ -36,13 +39,15 @@ AudioVisual::AudioVisual(int &argc, char **argv) : QApplication(argc, argv) {
     status = Status::getInstance();
     config = Config::getInstance();
 
+    audioWorker = new AudioWorker();
+
     mainWindow = new MainWindow();
     configWindow = new ConfigWindow();
-
-    timer = new QTimer(this);
 }
 
 AudioVisual::~AudioVisual() {
+    delete audioWorker;
+
     delete configWindow;
     delete mainWindow;
 }
@@ -50,19 +55,11 @@ AudioVisual::~AudioVisual() {
 void AudioVisual::prepare() {
     connect(status, &Status::updateRunning, mainWindow, &MainWindow::updateRunning);
 
+    connect(audioWorker, &AudioWorker::newStatus, status, &Status::setRunning);
+    connect(audioWorker, &AudioWorker::newAudioData, this, &AudioVisual::newAudioData);
+
     connect(mainWindow, &MainWindow::showConfiguration, this, &AudioVisual::showConfiguration);
     connect(mainWindow, &MainWindow::toggleRunning, this, &AudioVisual::toggleRun);
-
-    connect(timer, &QTimer::timeout, [=]() {
-        mainWindow->updateVuMeter(qrand() % 1024);
-
-        QList<double> data;
-        for (int i = 0; i < 1024; i++)
-            data.append(qrand() % 1024);
-        mainWindow->updateWaterfall(data);
-    });
-
-    timer->setSingleShot(false);
 }
 
 int AudioVisual::run() {
@@ -77,18 +74,59 @@ void AudioVisual::showConfiguration() {
 
 void AudioVisual::toggleRun(bool value) {
     if (value) {
-        status->setRunning(true);
-        startTimer();
+        for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioInput)) {
+            if (audioDeviceInfo.deviceName() == config->getAudioDevice()) {
+                audioWorker->setDeviceInfo(audioDeviceInfo);
+
+                QAudioFormat audioFormat;
+                audioFormat.setChannelCount(config->getAudioChannels());
+                audioFormat.setSampleRate(config->getAudioSampleRate());
+                audioFormat.setSampleSize(config->getAudioSampleSize());
+                audioFormat.setSampleType(config->getAudioSampleType());
+
+                const QAudioFormat &nearestFormat = audioDeviceInfo.nearestFormat(audioFormat);
+                qDebug() << audioFormat;
+                qDebug() << nearestFormat;
+
+                ggg = qPow(256, (int) (nearestFormat.sampleSize() / 8));
+                mainWindow->updateVuMeterMax(ggg);
+
+                audioWorker->setFormat(nearestFormat);
+                audioWorker->start();
+
+                status->setRunning(true);
+            }
+        }
     } else {
+        audioWorker->stop();
         status->setRunning(false);
-        stopTimer();
     }
 }
 
-void AudioVisual::startTimer() {
-    timer->start(1);
-}
+void AudioVisual::newAudioData(const QByteArray &data) {
+    int channels = config->getAudioChannels();
+    int bytes = config->getAudioSampleSize() / 8;
+    int increment = channels + bytes;
 
-void AudioVisual::stopTimer() {
-    timer->stop();
+    double sum = 0;
+    int samples = 0;
+
+    for (int i = 0; i < data.length(); i += increment) {
+        for (int c = 0; c < channels; c++) {
+            for (int b = 0; b < bytes; b++) {
+                sum += qPow(data[i + (c * bytes) + b] * (b * 256), 2);
+                samples++;
+            }
+        }
+
+    }
+
+    double mid = qSqrt(sum);
+
+    mainWindow->updateVuMeter(mid);
+
+    int level = (int) (1024 * (mid / ggg));
+    QList<double> wfData;
+    wfData.append(level);
+    mainWindow->updateWaterfall(wfData);
 }

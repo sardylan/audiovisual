@@ -27,6 +27,7 @@ add_executable(audiovisual
         status.hpp)
 
 target_link_libraries(audiovisual
+        audioworker
         customwidgets
         Qt5::Core
         Qt5::Gui
