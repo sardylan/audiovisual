@@ -52,5 +52,6 @@ int AudioVisual::run() {
 }
 
 void AudioVisual::displayConfig() {
-    configWindow->exec();
+//    configWindow->exec();
+    configWindow->show();
 }

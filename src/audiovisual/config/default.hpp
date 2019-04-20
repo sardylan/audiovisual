@@ -20,50 +20,15 @@
  */
 
 
-#ifndef __AUDIOVISUAL__WINDOWS_CONFIG__H
-#define __AUDIOVISUAL__WINDOWS_CONFIG__H
+#ifndef __AUDIOVISUAL__CONFIG_DEFAULT__H
+#define __AUDIOVISUAL__CONFIG_DEFAULT__H
 
-#include <QDialog>
-#include <config/config.hpp>
-#include <status.hpp>
+#include <QtMultimedia/QAudioFormat>
 
-namespace Ui {
-    class ConfigWindow;
-}
-
-class ConfigWindow : public QDialog {
-Q_OBJECT
-
-public:
-    explicit ConfigWindow(QWidget *parent = nullptr);
-
-    ~ConfigWindow() override;
-
-private:
-    Ui::ConfigWindow *ui;
-    Status *status;
-    Config *config;
-
-    void signalConnect();
-
-    void initUi();
-
-    void load();
-
-    void save();
-
-private slots:
-
-    void handleOK();
-
-    void handleApply();
-
-    void handleClose();
-
-    void handleReset();
-
-    void updateDeviceOptions();
-
-};
+#define CONFIG_AUDIO_DEVICE_DEFAULT ""
+#define CONFIG_AUDIO_CHANNELS_DEFAULT 1
+#define CONFIG_AUDIO_SAMPLE_RATE_DEFAULT 48000
+#define CONFIG_AUDIO_SAMPLE_SIZE_DEFAULT 16
+#define CONFIG_AUDIO_SAMPLE_TYPE_DEFAULT QAudioFormat::SignedInt
 
 #endif

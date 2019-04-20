@@ -17,8 +17,14 @@ add_executable(audiovisual
         windows/configwindow.cpp
         windows/configwindow.hpp
         windows/configwindow.ui
+        config/config.cpp
+        config/config.hpp
+        config/manager.cpp
+        config/manager.hpp
         audiovisual.cpp
-        audiovisual.hpp)
+        audiovisual.hpp
+        status.cpp
+        status.hpp)
 
 target_link_libraries(audiovisual
         customwidgets

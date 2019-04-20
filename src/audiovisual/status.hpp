@@ -20,50 +20,18 @@
  */
 
 
-#ifndef __AUDIOVISUAL__WINDOWS_CONFIG__H
-#define __AUDIOVISUAL__WINDOWS_CONFIG__H
+#ifndef __AUDIOVISUAL__STATUS__H
+#define __AUDIOVISUAL__STATUS__H
 
-#include <QDialog>
-#include <config/config.hpp>
-#include <status.hpp>
-
-namespace Ui {
-    class ConfigWindow;
-}
-
-class ConfigWindow : public QDialog {
-Q_OBJECT
-
-public:
-    explicit ConfigWindow(QWidget *parent = nullptr);
-
-    ~ConfigWindow() override;
+class Status {
 
 private:
-    Ui::ConfigWindow *ui;
-    Status *status;
-    Config *config;
+    Status();
 
-    void signalConnect();
+    static Status *instance;
 
-    void initUi();
-
-    void load();
-
-    void save();
-
-private slots:
-
-    void handleOK();
-
-    void handleApply();
-
-    void handleClose();
-
-    void handleReset();
-
-    void updateDeviceOptions();
-
+public:
+    static Status *getInstance();
 };
 
 #endif
