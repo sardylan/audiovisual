@@ -88,8 +88,8 @@ void AudioVisual::toggleRun(bool value) {
                 qDebug() << audioFormat;
                 qDebug() << nearestFormat;
 
-                ggg = qPow(256, (int) (nearestFormat.sampleSize() / 8));
-                mainWindow->updateVuMeterMax(ggg);
+                audioMaxValue = qPow(256, (int) (nearestFormat.sampleSize() / 8));
+                mainWindow->updateVuMeterMax(audioMaxValue);
 
                 audioWorker->setFormat(nearestFormat);
                 audioWorker->start();
@@ -109,23 +109,19 @@ void AudioVisual::newAudioData(const QByteArray &data) {
     int increment = channels + bytes;
 
     double sum = 0;
-    int samples = 0;
 
-    for (int i = 0; i < data.length(); i += increment) {
-        for (int c = 0; c < channels; c++) {
-            for (int b = 0; b < bytes; b++) {
+    QList<double> values;
+
+    for (int i = 0; i < data.length(); i += increment)
+        for (int c = 0; c < channels; c++)
+            for (int b = 0; b < bytes; b++)
                 sum += qPow(data[i + (c * bytes) + b] * (b * 256), 2);
-                samples++;
-            }
-        }
 
-    }
+    double rms = qSqrt(sum);
 
-    double mid = qSqrt(sum);
+    mainWindow->updateVuMeter(rms);
 
-    mainWindow->updateVuMeter(mid);
-
-    int level = (int) (1024 * (mid / ggg));
+    int level = (int) (1024 * (rms / audioMaxValue));
     QList<double> wfData;
     wfData.append(level);
     mainWindow->updateWaterfall(wfData);

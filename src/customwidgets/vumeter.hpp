@@ -45,18 +45,17 @@ public:
 
 public slots:
 
-    void setMin(double min);
+    void setMin(double newValue);
 
-    void setMax(double max);
+    void setMax(double value);
 
-    void setWarning(double warning);
+    void setWarning(double value);
 
-    void setAlert(double alert);
+    void setAlert(double value);
 
     void setValue(double value);
 
 protected:
-//    void paintEvent(QPaintEvent *event) override;
 
     void initializeGL() override;
 

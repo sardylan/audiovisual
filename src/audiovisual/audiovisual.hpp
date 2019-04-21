@@ -54,7 +54,7 @@ private:
     ConfigWindow *configWindow;
     MainWindow *mainWindow;
 
-    double ggg;
+    double audioMaxValue;
 
 
 private slots:
