@@ -23,6 +23,9 @@
 #include <QtCore/QtMath>
 #include <QtCore/QIODevice>
 
+#include <complex>
+#include <fftw3.h>
+
 #include "worker.hpp"
 
 AudioWorker::AudioWorker(QObject *parent) : QObject(parent) {
@@ -95,14 +98,43 @@ void AudioWorker::readAvailableData() {
     double rms = computeRms(values);
     emit newAudioRms(rms);
 
-    
+    QList<double> fft = computeFFT(values);
+    emit newAudioFFT(fft);
 }
 
-double AudioWorker::computeRms(QList<double> &values) const {
+double AudioWorker::computeRms(QList<double> &values) {
     double sum = 0;
 
     for (const double &v: values)
         sum += qPow(v, 2);
 
     return qSqrt(sum);
+}
+
+QList<double> AudioWorker::computeFFT(QList<double> &values) {
+    unsigned int n = values.size();
+
+    auto *in = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * n);
+    auto *out = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * n);
+
+    for (int i = 0; i < n; i++) {
+        in[i][0] = values[0];
+        in[i][1] = 0;
+    }
+
+    fftw_plan p;
+    p = fftw_plan_dft_1d(n, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+
+    fftw_execute(p);
+
+    QList<double> fft;
+    for (int i = 0; i < n; i++)
+        fft.append(out[i][0]);
+
+    fftw_destroy_plan(p);
+
+    fftw_free(in);
+    fftw_free(out);
+
+    return fft;
 }

@@ -57,6 +57,7 @@ void AudioVisual::prepare() {
 
     connect(audioWorker, &AudioWorker::newStatus, status, &Status::setRunning);
     connect(audioWorker, &AudioWorker::newAudioRms, this, &AudioVisual::newAudioRms);
+    connect(audioWorker, &AudioWorker::newAudioFFT, this, &AudioVisual::newAudioFFT);
 
     connect(mainWindow, &MainWindow::showConfiguration, this, &AudioVisual::showConfiguration);
     connect(mainWindow, &MainWindow::toggleRunning, this, &AudioVisual::toggleRun);
@@ -105,4 +106,8 @@ void AudioVisual::toggleRun(bool value) {
 
 void AudioVisual::newAudioRms(const double &rms) {
     mainWindow->updateVuMeter(rms);
+}
+
+void AudioVisual::newAudioFFT(const QList<double> &fft) {
+    mainWindow->updateWaterfall(fft);
 }

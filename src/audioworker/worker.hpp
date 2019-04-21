@@ -63,7 +63,9 @@ private:
 
     QThread *audioThread;
 
-    double computeRms(QList<double> &values) const;
+    static double computeRms(QList<double> &values);
+
+    static QList<double> computeFFT(QList<double> &values);
 
 private slots:
 
@@ -73,9 +75,11 @@ signals:
 
     void newStatus(bool value);
 
+    void newAudioData(const QByteArray &data);
+
     void newAudioRms(const double &rms);
 
-    void newAudioData(const QByteArray &data);
+    void newAudioFFT(const QList<double> &fft);
 
 };
 
