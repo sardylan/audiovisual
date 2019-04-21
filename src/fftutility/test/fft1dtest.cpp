@@ -47,12 +47,16 @@ void FFT1DTest::testComputeRow() {
     for (unsigned long i = 0; i < samples; i++)
         input.append(qSin((i / samplesPerPeriod) * (2 * M_PI)));
 
-    FFT1D fft1D(TEST_SAMPLE_RATE / TEST_RESOLUTION);
+    int n = TEST_SAMPLE_RATE / TEST_RESOLUTION;
+    FFT1D fft1D(n);
+    fft1D.setMax(1024);
 
     actual = fft1D.execute(input);
 
-    for (unsigned int i = 0; i < (TEST_SAMPLE_RATE / TEST_RESOLUTION) / 2; i++)
-        printf("%u Hz\t%.06f\n", i * TEST_RESOLUTION, actual[i]);
-
-    //    QCOMPARE(actual, expected);
+    for (unsigned int i = 0; i < ((n / 2) + 1); i++) {
+        if ((i * TEST_RESOLUTION) == TEST_TONE_FREQUENCY)
+            QCOMPARE(actual[i], 1024.0);
+        else
+            QCOMPARE((int) actual[i], 0);
+    }
 }

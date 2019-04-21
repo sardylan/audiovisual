@@ -61,7 +61,7 @@ QList<double> FFT1D::execute(const QList<double> &data) const {
     fftw_execute(plan);
 
     QList<double> fft;
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < (size / 2) + 1; i++)
         fft.append((qSqrt(qPow(output[i][0], 2) + qPow(output[i][1], 2)) / ((double) size / 2)) * max);
 
     return fft;
