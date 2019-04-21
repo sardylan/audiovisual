@@ -19,8 +19,9 @@
  *
  */
 
-#include <QDebug>
-#include <QIODevice>
+#include <QtCore/QDebug>
+#include <QtCore/QtMath>
+#include <QtCore/QIODevice>
 
 #include "worker.hpp"
 
@@ -75,6 +76,33 @@ void AudioWorker::stop() {
 void AudioWorker::readAvailableData() {
     QByteArray data = ioDevice->readAll();
 
-    if (data.size() > 0)
-            emit newAudioData(data);
+    if (data.size() == 0)
+        return;
+
+    emit newAudioData(data);
+
+    int channels = format.channelCount();
+    int bytes = format.sampleSize() / 8;
+    int increment = channels + bytes;
+
+    QList<double> values;
+
+    for (int i = 0; i < data.length(); i += increment)
+        for (int c = 0; c < channels; c++)
+            for (int b = 0; b < bytes; b++)
+                values.append(data[i + (c * bytes) + b] * (b * 256));
+
+    double rms = computeRms(values);
+    emit newAudioRms(rms);
+
+    
+}
+
+double AudioWorker::computeRms(QList<double> &values) const {
+    double sum = 0;
+
+    for (const double &v: values)
+        sum += qPow(v, 2);
+
+    return qSqrt(sum);
 }

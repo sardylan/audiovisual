@@ -19,7 +19,7 @@
  *
  */
 
-#include <QDebug>
+#include <QtCore/QDebug>
 #include <QtCore/QtMath>
 
 #include "audiovisual.hpp"
@@ -56,7 +56,7 @@ void AudioVisual::prepare() {
     connect(status, &Status::updateRunning, mainWindow, &MainWindow::updateRunning);
 
     connect(audioWorker, &AudioWorker::newStatus, status, &Status::setRunning);
-    connect(audioWorker, &AudioWorker::newAudioData, this, &AudioVisual::newAudioData);
+    connect(audioWorker, &AudioWorker::newAudioRms, this, &AudioVisual::newAudioRms);
 
     connect(mainWindow, &MainWindow::showConfiguration, this, &AudioVisual::showConfiguration);
     connect(mainWindow, &MainWindow::toggleRunning, this, &AudioVisual::toggleRun);
@@ -103,26 +103,6 @@ void AudioVisual::toggleRun(bool value) {
     }
 }
 
-void AudioVisual::newAudioData(const QByteArray &data) {
-    int channels = config->getAudioChannels();
-    int bytes = config->getAudioSampleSize() / 8;
-    int increment = channels + bytes;
-
-    double sum = 0;
-
-    QList<double> values;
-
-    for (int i = 0; i < data.length(); i += increment)
-        for (int c = 0; c < channels; c++)
-            for (int b = 0; b < bytes; b++)
-                sum += qPow(data[i + (c * bytes) + b] * (b * 256), 2);
-
-    double rms = qSqrt(sum);
-
+void AudioVisual::newAudioRms(const double &rms) {
     mainWindow->updateVuMeter(rms);
-
-    int level = (int) (1024 * (rms / audioMaxValue));
-    QList<double> wfData;
-    wfData.append(level);
-    mainWindow->updateWaterfall(wfData);
 }

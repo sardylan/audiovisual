@@ -63,6 +63,8 @@ private:
 
     QThread *audioThread;
 
+    double computeRms(QList<double> &values) const;
+
 private slots:
 
     void readAvailableData();
@@ -70,6 +72,8 @@ private slots:
 signals:
 
     void newStatus(bool value);
+
+    void newAudioRms(const double &rms);
 
     void newAudioData(const QByteArray &data);
 

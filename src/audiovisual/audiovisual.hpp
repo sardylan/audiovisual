@@ -56,14 +56,13 @@ private:
 
     double audioMaxValue;
 
-
 private slots:
 
     void showConfiguration();
 
     void toggleRun(bool value);
 
-    void newAudioData(const QByteArray& data);
+    void newAudioRms(const double &rms);
 };
 
 #endif
