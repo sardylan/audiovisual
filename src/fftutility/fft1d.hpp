@@ -40,9 +40,14 @@ public:
 
     void setMax(unsigned int max);
 
+    unsigned int getRange() const;
+
+    void setRange(unsigned int range);
+
 private:
     const unsigned int size;
     unsigned int max;
+    unsigned int range;
 
     double *input;
     fftw_complex *output;

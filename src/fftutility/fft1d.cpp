@@ -28,10 +28,12 @@
 
 #include "fft1d.hpp"
 
-#define DEFAULT_MAX 1024
+#define DEFAULT_MAX 65536
+#define DEFAULT_RANGE 1024
 
 FFT1D::FFT1D(const unsigned int &size) : size(size) {
     max = DEFAULT_MAX;
+    range = DEFAULT_RANGE;
 
     input = (double *) fftw_malloc(sizeof(double) * size);
     output = (fftw_complex *) fftw_malloc((sizeof(fftw_complex) * (size / 2) + 1));
@@ -54,15 +56,30 @@ void FFT1D::setMax(unsigned int value) {
     FFT1D::max = value;
 }
 
+unsigned int FFT1D::getRange() const {
+    return range;
+}
+
+void FFT1D::setRange(unsigned int value) {
+    FFT1D::range = value;
+}
+
 QList<double> FFT1D::execute(const QList<double> &data) const {
+    int dataSize = data.size();
     for (int i = 0; i < size; i++)
         input[i] = data[i];
 
     fftw_execute(plan);
 
+    double maxValue = (double) size / 2;
+    double normalizeFactor = range / (maxValue * max);
+
     QList<double> fft;
-    for (int i = 0; i < (size / 2) + 1; i++)
-        fft.append((qSqrt(qPow(output[i][0], 2) + qPow(output[i][1], 2)) / ((double) size / 2)) * max);
+    for (int i = 0; i < (size / 2) + 1; i++) {
+        double magnitude = qSqrt(qPow(output[i][0], 2) + qPow(output[i][1], 2));
+        double magnitudeNormalized = magnitude * normalizeFactor;
+        fft.append(magnitudeNormalized);
+    }
 
     return fft;
 }

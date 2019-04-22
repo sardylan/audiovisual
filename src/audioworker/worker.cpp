@@ -29,6 +29,7 @@
 #include "worker.hpp"
 
 AudioWorker::AudioWorker(QObject *parent) : QObject(parent) {
+    rawData.clear();
 }
 
 AudioWorker::~AudioWorker() = default;
@@ -50,6 +51,9 @@ void AudioWorker::setFormat(const QAudioFormat &value) {
 }
 
 void AudioWorker::start() {
+    fft1D = new FFT1D(format.sampleRate() / 50);
+    fft1D->setMax(1024);
+
     audioThread = new QThread(this);
     connect(audioThread, &QThread::finished, audioThread, &QThread::deleteLater);
 
@@ -77,29 +81,63 @@ void AudioWorker::stop() {
 }
 
 void AudioWorker::readAvailableData() {
-    QByteArray data = ioDevice->readAll();
-
-    if (data.size() == 0)
-        return;
-
-    emit newAudioData(data);
-
     int channels = format.channelCount();
     int bytes = format.sampleSize() / 8;
-    int increment = channels + bytes;
+    int increment = channels * bytes;
+
+    while (true) {
+        QByteArray b = ioDevice->read(1);
+        if (b.length() == 0)
+            return;
+
+        rawData.append(b);
+        if (rawData.length() == (format.sampleRate() / 50) * increment)
+            break;
+    }
+
+    if (rawData.length() != (format.sampleRate() / 50) * increment)
+        return;
+
+    parsePayload(rawData);
+
+    rawData.clear();
+}
+
+void AudioWorker::parsePayload(const QByteArray &payloadData) {
+    int channels = format.channelCount();
+    int bytes = format.sampleSize() / 8;
+    int increment = channels * bytes;
+
+    emit newAudioData(payloadData);
 
     QList<double> values;
 
-    for (int i = 0; i < data.length(); i += increment)
-        for (int c = 0; c < channels; c++)
-            for (int b = 0; b < bytes; b++)
-                values.append(data[i + (c * bytes) + b] * (b * 256));
+    for (int i = 0; i < payloadData.length(); i += increment) {
+        double v = 0;
 
-    double rms = computeRms(values);
+        for (int c = 0; c < channels; c++) {
+            if (format.byteOrder() == QAudioFormat::LittleEndian) {
+                for (int b = 0; b < bytes; b++)
+                    v += payloadData[i + (c * b) + b] * qPow(256, b);
+            } else {
+                for (int b = bytes - 1; b >= 0; b--)
+                    v += payloadData[i + (c * b) + b] * qPow(256, b);
+            }
+        }
+
+        v /= channels;
+        values.append(v);
+    }
+
+    double rms = computeRms(values);emit
     emit newAudioRms(rms);
 
-    QList<double> fft = computeFFT(values);
+    QList<double> fft = computeFFT(values);emit
     emit newAudioFFT(fft);
+}
+
+QList<double> AudioWorker::computeFFT(QList<double> &values) {
+    return fft1D->execute(values);
 }
 
 double AudioWorker::computeRms(QList<double> &values) {
@@ -109,32 +147,4 @@ double AudioWorker::computeRms(QList<double> &values) {
         sum += qPow(v, 2);
 
     return qSqrt(sum);
-}
-
-QList<double> AudioWorker::computeFFT(QList<double> &values) {
-    unsigned int n = values.size();
-
-    auto *in = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * n);
-    auto *out = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * n);
-
-    for (int i = 0; i < n; i++) {
-        in[i][0] = values[0];
-        in[i][1] = 0;
-    }
-
-    fftw_plan p;
-    p = fftw_plan_dft_1d(n, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-
-    fftw_execute(p);
-
-    QList<double> fft;
-    for (int i = 0; i < n; i++)
-        fft.append(out[i][0]);
-
-    fftw_destroy_plan(p);
-
-    fftw_free(in);
-    fftw_free(out);
-
-    return fft;
 }

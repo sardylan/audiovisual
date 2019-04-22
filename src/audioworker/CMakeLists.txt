@@ -4,6 +4,7 @@ find_package(Qt5 REQUIRED COMPONENTS
 
 find_package(FFTW REQUIRED COMPONENTS
         FFTW_MT)
+
 include_directories(${FFTW_INCLUDE_DIRS})
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -13,6 +14,7 @@ add_library(audioworker
         worker.hpp)
 
 target_link_libraries(audioworker
+        fftutility
         Qt5::Core
         Qt5::Multimedia
         FFTW::FFTW_MT

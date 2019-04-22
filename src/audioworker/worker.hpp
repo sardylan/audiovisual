@@ -30,6 +30,8 @@
 #include <QtMultimedia/QAudioFormat>
 #include <QtMultimedia/QAudioInput>
 
+#include <fft1d.hpp>
+
 
 class AudioWorker : public QObject {
 Q_OBJECT
@@ -62,10 +64,15 @@ private:
     QIODevice *ioDevice;
 
     QThread *audioThread;
+    QByteArray rawData;
+
+    FFT1D *fft1D;
+
+    QList<double> computeFFT(QList<double> &values);
+
+    void parsePayload(const QByteArray &payloadData);
 
     static double computeRms(QList<double> &values);
-
-    static QList<double> computeFFT(QList<double> &values);
 
 private slots:
 
