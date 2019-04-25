@@ -67,12 +67,13 @@ private:
     QByteArray rawData;
 
     FFT1D *fft1D;
-
-    QList<double> computeFFT(QList<double> &values);
+    unsigned int fftSize;
 
     void parsePayload(const QByteArray &payloadData);
 
-    static double computeRms(QList<double> &values);
+    void computeRMS(QList<double> &values);
+
+    void computeFFT(QList<double> &values);
 
 private slots:
 

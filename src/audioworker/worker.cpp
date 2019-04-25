@@ -25,11 +25,14 @@
 
 #include <complex>
 #include <fftw3.h>
+#include <QtConcurrent/QtConcurrent>
 
 #include "worker.hpp"
 
 AudioWorker::AudioWorker(QObject *parent) : QObject(parent) {
     rawData.clear();
+
+    fftSize = 0;
 }
 
 AudioWorker::~AudioWorker() = default;
@@ -48,10 +51,12 @@ const QAudioFormat &AudioWorker::getFormat() const {
 
 void AudioWorker::setFormat(const QAudioFormat &value) {
     AudioWorker::format = value;
+
+    fftSize = format.sampleRate()/5;
 }
 
 void AudioWorker::start() {
-    fft1D = new FFT1D(format.sampleRate() / 50);
+    fft1D = new FFT1D(fftSize);
     fft1D->setMax(1024);
 
     audioThread = new QThread(this);
@@ -91,11 +96,11 @@ void AudioWorker::readAvailableData() {
             return;
 
         rawData.append(b);
-        if (rawData.length() == (format.sampleRate() / 50) * increment)
+        if (rawData.length() == (fftSize) * increment)
             break;
     }
 
-    if (rawData.length() != (format.sampleRate() / 50) * increment)
+    if (rawData.length() != (fftSize) * increment)
         return;
 
     parsePayload(rawData);
@@ -129,22 +134,22 @@ void AudioWorker::parsePayload(const QByteArray &payloadData) {
         values.append(v);
     }
 
-    double rms = computeRms(values);emit
-    emit newAudioRms(rms);
-
-    QList<double> fft = computeFFT(values);emit
-    emit newAudioFFT(fft);
+    QtConcurrent::run(this, &AudioWorker::computeRMS, values);
+    QtConcurrent::run(this, &AudioWorker::computeFFT, values);
 }
 
-QList<double> AudioWorker::computeFFT(QList<double> &values) {
-    return fft1D->execute(values);
-}
-
-double AudioWorker::computeRms(QList<double> &values) {
+void AudioWorker::computeRMS(QList<double> &values) {
     double sum = 0;
 
     for (const double &v: values)
         sum += qPow(v, 2);
 
-    return qSqrt(sum);
+    double rms = qSqrt(sum);
+    emit newAudioRms(rms);
+}
+
+void AudioWorker::computeFFT(QList<double> &values) {
+    QList<double> fft = fft1D->execute(values);
+
+    emit newAudioFFT(fft);
 }

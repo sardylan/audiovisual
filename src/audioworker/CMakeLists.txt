@@ -1,6 +1,7 @@
 find_package(Qt5 REQUIRED COMPONENTS
         Core
-        Multimedia)
+        Multimedia
+        Concurrent)
 
 find_package(FFTW REQUIRED COMPONENTS
         FFTW_MT)
@@ -17,6 +18,7 @@ target_link_libraries(audioworker
         fftutility
         Qt5::Core
         Qt5::Multimedia
+        Qt5::Concurrent
         FFTW::FFTW_MT
         fftw3)
 
