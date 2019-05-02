@@ -52,12 +52,12 @@ const QAudioFormat &AudioWorker::getFormat() const {
 void AudioWorker::setFormat(const QAudioFormat &value) {
     AudioWorker::format = value;
 
-    fftSize = format.sampleRate()/5;
+    fftSize = format.sampleRate() / 5;
 }
 
 void AudioWorker::start() {
     fft1D = new FFT1D(fftSize);
-    fft1D->setMax(1024);
+    fft1D->setRange(1024);
 
     audioThread = new QThread(this);
     connect(audioThread, &QThread::finished, audioThread, &QThread::deleteLater);

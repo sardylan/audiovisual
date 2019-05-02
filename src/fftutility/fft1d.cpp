@@ -65,7 +65,6 @@ void FFT1D::setRange(unsigned int value) {
 }
 
 QList<double> FFT1D::execute(const QList<double> &data) const {
-    int dataSize = data.size();
     for (int i = 0; i < size; i++)
         input[i] = data[i];
 
@@ -75,7 +74,7 @@ QList<double> FFT1D::execute(const QList<double> &data) const {
     double normalizeFactor = range / (maxValue * max);
 
     QList<double> fft;
-    for (int i = 0; i < (size / 2) + 1; i++) {
+    for (int i = 0; i <= (int) maxValue; i++) {
         double magnitude = qSqrt(qPow(output[i][0], 2) + qPow(output[i][1], 2));
         double magnitudeNormalized = magnitude * normalizeFactor;
         fft.append(magnitudeNormalized);
