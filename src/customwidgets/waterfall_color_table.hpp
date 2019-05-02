@@ -22,7 +22,7 @@
 #ifndef __AUDIOVISUAL__CUSTOMWIDGETS_WATERFALL_COLOR_TABLE__H
 #define __AUDIOVISUAL__CUSTOMWIDGETS_WATERFALL_COLOR_TABLE__H
 
-const int waterfall_color_table[1024][3] = {
+const int waterfall_color_table[1025][3] = {
     {0, 0, 0},
     {0, 0, 1},
     {0, 0, 2},
@@ -1047,6 +1047,7 @@ const int waterfall_color_table[1024][3] = {
     {255, 253, 253},
     {255, 254, 254},
     {255, 255, 255},
+    {255, 0, 255}
 };
 
 #endif
