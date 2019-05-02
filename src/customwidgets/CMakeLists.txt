@@ -17,7 +17,8 @@ add_library(customwidgets
         utility.cpp
         utility.hpp
         waterfall.cpp
-        waterfall.hpp)
+        waterfall.hpp
+        waterfall_color_table.hpp)
 
 target_link_libraries(customwidgets
         Qt5::Core

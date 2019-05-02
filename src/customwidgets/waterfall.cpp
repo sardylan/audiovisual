@@ -21,6 +21,7 @@
 
 #include "waterfall.hpp"
 #include "utility.hpp"
+#include "waterfall_color_table.hpp"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -93,30 +94,9 @@ QColor Waterfall::computeRgbValue(int value) {
     if (v > CUSTOMWIDGETS_WATERFALL_DATA_MAX)
         v = CUSTOMWIDGETS_WATERFALL_DATA_MAX;
 
-    int r = 255;
-    int g = 0;
-    int b = 255;
-
-    if (v < 256) {
-        r = 0;
-        g = 0;
-        b = v;
-    } else if (v < 512) {
-        int k = v - 256;
-        r = k;
-        g = k;
-        b = 255 - k;
-    } else if (v < 768) {
-        int k = v - 512;
-        r = 255;
-        g = 255 - k;
-        b = 0;
-    } else if (v < CUSTOMWIDGETS_WATERFALL_DATA_MAX) {
-        int k = v - 768;
-        r = 255;
-        g = k;
-        b = k;
-    }
+    int r = waterfall_color_table[v][0];
+    int g = waterfall_color_table[v][1];
+    int b = waterfall_color_table[v][2];
 
     return QColor::fromRgb(r, g, b);
 }
