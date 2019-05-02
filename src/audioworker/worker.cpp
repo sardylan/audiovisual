@@ -33,6 +33,7 @@ AudioWorker::AudioWorker(QObject *parent) : QObject(parent) {
     rawData.clear();
 
     fftSize = 0;
+    gain = 1;
 }
 
 AudioWorker::~AudioWorker() = default;
@@ -52,7 +53,7 @@ const QAudioFormat &AudioWorker::getFormat() const {
 void AudioWorker::setFormat(const QAudioFormat &value) {
     AudioWorker::format = value;
 
-    fftSize = format.sampleRate() / 5;
+    fftSize = format.sampleRate() / 10;
 }
 
 void AudioWorker::start() {
@@ -91,11 +92,12 @@ void AudioWorker::readAvailableData() {
     int increment = channels * bytes;
 
     while (true) {
-        QByteArray b = ioDevice->read(1);
-        if (b.length() == 0)
+        char c;
+        qint64 bytesRead = ioDevice->read(&c, 1);
+        if (bytesRead <= 0)
             return;
 
-        rawData.append(b);
+        rawData.append(c);
         if (rawData.length() == (fftSize) * increment)
             break;
     }
@@ -121,16 +123,26 @@ void AudioWorker::parsePayload(const QByteArray &payloadData) {
         double v = 0;
 
         for (int c = 0; c < channels; c++) {
-            if (format.byteOrder() == QAudioFormat::LittleEndian) {
-                for (int b = 0; b < bytes; b++)
-                    v += payloadData[i + (c * b) + b] * qPow(256, b);
-            } else {
-                for (int b = bytes - 1; b >= 0; b--)
-                    v += payloadData[i + (c * b) + b] * qPow(256, b);
-            }
+            QByteArray byteValue;
+
+            for (int b = 0; b < bytes; b++)
+                byteValue.append(payloadData[i + (c * b) + b]);
+
+            if (format.byteOrder() == QAudioFormat::LittleEndian)
+                v += qFromLittleEndian<qint16>(byteValue);
+            else
+                v += qFromBigEndian<qint16>(byteValue);
         }
 
         v /= channels;
+
+        v *= gain;
+
+        if (v > qPow(256, bytes))
+            v = qPow(256, bytes);
+        if (v < -qPow(256, bytes))
+            v = -qPow(256, bytes);
+
         values.append(v);
     }
 
@@ -142,9 +154,9 @@ void AudioWorker::computeRMS(QList<double> &values) {
     double sum = 0;
 
     for (const double &v: values)
-        sum += qPow(v, 2);
+        sum += v * v;
 
-    double rms = qSqrt(sum);
+    double rms = qSqrt(sum / values.length());
     emit newAudioRms(rms);
 }
 
@@ -152,4 +164,12 @@ void AudioWorker::computeFFT(QList<double> &values) {
     QList<double> fft = fft1D->execute(values);
 
     emit newAudioFFT(fft);
+}
+
+double AudioWorker::getGain() const {
+    return gain;
+}
+
+void AudioWorker::setGain(double value) {
+    AudioWorker::gain = value;
 }

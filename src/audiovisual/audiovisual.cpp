@@ -61,6 +61,7 @@ void AudioVisual::prepare() {
 
     connect(mainWindow, &MainWindow::showConfiguration, this, &AudioVisual::showConfiguration);
     connect(mainWindow, &MainWindow::toggleRunning, this, &AudioVisual::toggleRun);
+    connect(mainWindow, &MainWindow::newGainValue, this, &AudioVisual::newGainValue);
 }
 
 int AudioVisual::run() {
@@ -102,6 +103,10 @@ void AudioVisual::toggleRun(bool value) {
         audioWorker->stop();
         status->setRunning(false);
     }
+}
+
+void AudioVisual::newGainValue(double value) {
+    audioWorker->setGain(value);
 }
 
 void AudioVisual::newAudioRms(const double &rms) {

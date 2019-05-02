@@ -62,6 +62,8 @@ private slots:
 
     void toggleRun(bool value);
 
+    void newGainValue(double value);
+
     void newAudioRms(const double &rms);
 
     void newAudioFFT(const QList<double> &fft);

@@ -62,11 +62,17 @@ private:
 
     void initUi();
 
+private slots:
+
+    void newGain();
+
 signals:
 
     void showConfiguration();
 
     void toggleRunning(bool value);
+
+    void newGainValue(double value);
 };
 
 #endif

@@ -20,24 +20,48 @@
       <property name="title">
        <string>Signals</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,1" columnstretch="0,1">
+      <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,1">
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="gainLabel">
+         <property name="text">
+          <string>Gain</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSlider" name="gainSlider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="vuMeterlabel">
          <property name="text">
           <string>Level</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="0" column="2">
+        <widget class="QLabel" name="gainValue">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="2">
         <widget class="QStackedWidget" name="vuMeterStackedWidget"/>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="2" column="0" colspan="3">
         <widget class="QStackedWidget" name="waterfallWidget"/>
        </item>
       </layout>
       <zorder>waterfallWidget</zorder>
-      <zorder>label</zorder>
+      <zorder>vuMeterlabel</zorder>
       <zorder>vuMeterStackedWidget</zorder>
+      <zorder>gainLabel</zorder>
+      <zorder>gainSlider</zorder>
+      <zorder>gainValue</zorder>
      </widget>
     </item>
    </layout>

@@ -50,11 +50,15 @@ public:
 
     void setFormat(const QAudioFormat &value);
 
+    double getGain() const;
+
 public slots:
 
     void start();
 
     void stop();
+
+    void setGain(double value);
 
 private:
     QAudioDeviceInfo deviceInfo;
@@ -68,6 +72,8 @@ private:
 
     FFT1D *fft1D;
     unsigned int fftSize;
+
+    double gain;
 
     void parsePayload(const QByteArray &payloadData);
 

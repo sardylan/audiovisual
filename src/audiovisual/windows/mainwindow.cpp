@@ -20,6 +20,7 @@
  */
 
 #include <QtCore/QDebug>
+#include <QtCore/QtMath>
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
@@ -38,12 +39,6 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::signalConnect() {
-    connect(ui->actionFileExit, &QAction::triggered, this, &MainWindow::close);
-    connect(ui->actionConfig, &QAction::triggered, this, &MainWindow::showConfiguration);
-    connect(ui->actionRun, &QAction::triggered, this, &MainWindow::toggleRunning);
-}
-
 void MainWindow::initUi() {
     ui->vuMeterStackedWidget->addWidget(vuMeter);
     ui->waterfallWidget->addWidget(waterfall);
@@ -52,11 +47,24 @@ void MainWindow::initUi() {
     vuMeter->setMax(1024);
     vuMeter->setWarning(512);
     vuMeter->setAlert(900);
+
+    ui->gainSlider->setMinimum(0);
+    ui->gainSlider->setMaximum(10000);
+    ui->gainSlider->setValue(100);
+
+    newGain();
+}
+
+void MainWindow::signalConnect() {
+    connect(ui->actionFileExit, &QAction::triggered, this, &MainWindow::close);
+    connect(ui->actionConfig, &QAction::triggered, this, &MainWindow::showConfiguration);
+    connect(ui->actionRun, &QAction::triggered, this, &MainWindow::toggleRunning);
+
+    connect(ui->gainSlider, &QAbstractSlider::valueChanged, this, &MainWindow::newGain);
 }
 
 void MainWindow::updateRunning(bool value) {
     ui->actionRun->setChecked(value);
-
 }
 
 void MainWindow::updateVuMeterMax(const double &value) {
@@ -72,4 +80,13 @@ void MainWindow::updateVuMeter(const double &value) {
 
 void MainWindow::updateWaterfall(const QList<double> &data) {
     waterfall->addData(data);
+}
+
+void MainWindow::newGain() {
+
+    double logValue = ((double) ui->gainSlider->value()) / ((double) ui->gainSlider->maximum() / 100);
+
+    ui->gainValue->setText(QString().setNum(logValue, 'f', 2));
+
+    emit newGainValue(logValue);
 }
