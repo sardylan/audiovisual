@@ -45,10 +45,10 @@ if __name__ == "__main__":
 #ifndef __AUDIOVISUAL__CUSTOMWIDGETS_WATERFALL_COLOR_TABLE__H
 #define __AUDIOVISUAL__CUSTOMWIDGETS_WATERFALL_COLOR_TABLE__H
 
-const int waterfall_color_table[1024][3] = {
+const int waterfall_color_table[1025][3] = {
 """)
 
-    for v in range(0, 1024):
+    for v in range(0, 1025):
         if v < 256:
             fd.write("    {%d, %d, %d},\n" % (0, 0, v))
         elif v < 512:
@@ -57,11 +57,12 @@ const int waterfall_color_table[1024][3] = {
         elif v < 768:
             k = v - 512
             fd.write("    {%d, %d, %d},\n" % (255, 255 - k, 0))
-        else:
+        elif v < 1024:
             k = v - 768
             fd.write("    {%d, %d, %d},\n" % (255, k, k))
 
-    fd.write("""};
+    fd.write("""    {255, 0, 255}
+};
 
 #endif
 
