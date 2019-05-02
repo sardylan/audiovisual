@@ -34,7 +34,7 @@ public:
 
     ~FFT1D();
 
-    QList<double> execute(const QList<double> &data) const;
+    QList<double> execute(const QList<double> &data);
 
     unsigned int getMax() const;
 
@@ -49,11 +49,14 @@ private:
     unsigned int max;
     unsigned int range;
 
+    int outputSize;
+
     double *input;
     fftw_complex *output;
 
     fftw_plan plan;
 
+    void updateOutputSize();
 };
 
 #endif

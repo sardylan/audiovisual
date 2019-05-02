@@ -35,6 +35,8 @@ FFT1D::FFT1D(const unsigned int &size) : size(size) {
     max = DEFAULT_MAX;
     range = DEFAULT_RANGE;
 
+    updateOutputSize();
+
     input = (double *) fftw_malloc(sizeof(double) * size);
     output = (fftw_complex *) fftw_malloc((sizeof(fftw_complex) * (size / 2) + 1));
 
@@ -64,21 +66,31 @@ void FFT1D::setRange(unsigned int value) {
     FFT1D::range = value;
 }
 
-QList<double> FFT1D::execute(const QList<double> &data) const {
+QList<double> FFT1D::execute(const QList<double> &data) {
     for (int i = 0; i < size; i++)
         input[i] = data[i];
 
     fftw_execute(plan);
 
-    double maxValue = (double) size / 2;
-    double normalizeFactor = range / (maxValue * max);
-
     QList<double> fft;
-    for (int i = 0; i <= (int) maxValue; i++) {
-        double magnitude = qSqrt(qPow(output[i][0], 2) + qPow(output[i][1], 2));
-        double magnitudeNormalized = magnitude * normalizeFactor;
+    for (int i = 0; i <= outputSize; i++) {
+        double re = output[i][0] / (outputSize * max);
+        double im = output[i][1] / (outputSize * max);
+        double magnitude = qSqrt((re * re) + (im * im));
+        double mNorm = magnitude;
+        double logArg = 1 + (mNorm * 9);
+        double logValue = log10(logArg);
+        double magnitudeNormalized = logValue * range;
+
+        if (magnitudeNormalized > outputSize)
+            qDebug() << i << re << im << magnitude << outputSize << mNorm << logArg << logValue << magnitudeNormalized;
+
         fft.append(magnitudeNormalized);
     }
 
     return fft;
+}
+
+void FFT1D::updateOutputSize() {
+    outputSize = size / 2;
 }
