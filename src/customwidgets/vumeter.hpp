@@ -76,8 +76,18 @@ private:
 
     double interval;
 
+    float halfInterval;
+    float valueThreshold;
+    float warningThreshold;
+    float alertThreshold;
+
     void updateInterval();
 
+    void updateValueThreshold();
+
+    void updateWarningThreshold();
+
+    void updateAlertThreshold();
 };
 
 #endif

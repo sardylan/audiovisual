@@ -66,7 +66,7 @@ double VUMeter::getWarning() const {
 
 void VUMeter::setWarning(double newValue) {
     VUMeter::warning = newValue;
-    updateInterval();
+    updateWarningThreshold();
     update();
 }
 
@@ -76,7 +76,7 @@ double VUMeter::getAlert() const {
 
 void VUMeter::setAlert(double newValue) {
     VUMeter::alert = newValue;
-    updateInterval();
+    updateAlertThreshold();
     update();
 }
 
@@ -86,11 +86,29 @@ double VUMeter::getValue() const {
 
 void VUMeter::setValue(double newValue) {
     VUMeter::value = newValue;
+    updateValueThreshold();
     update();
 }
 
 void VUMeter::updateInterval() {
     interval = max - min;
+    halfInterval = interval / 2;
+
+    updateValueThreshold();
+    updateWarningThreshold();
+    updateAlertThreshold();
+}
+
+void VUMeter::updateAlertThreshold() {
+    alertThreshold = (alert / halfInterval) - 1;
+}
+
+void VUMeter::updateWarningThreshold() {
+    warningThreshold = (warning / halfInterval) - 1;
+}
+
+void VUMeter::updateValueThreshold() {
+    valueThreshold = (value / halfInterval) - 1;
 }
 
 void VUMeter::initializeGL() {
@@ -106,11 +124,6 @@ void VUMeter::resizeGL(int w, int h) {
 void VUMeter::paintGL() {
     if (width == 0 || height == 0)
         return;
-
-    float halfInterval = interval / 2;
-    float valueThreshold = (value / halfInterval) - 1;
-    float warningThreshold = (warning / halfInterval) - 1;
-    float alertThreshold = (alert / halfInterval) - 1;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -146,5 +159,4 @@ void VUMeter::paintGL() {
     }
 
     glEnd();
-
 }
