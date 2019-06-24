@@ -23,24 +23,20 @@
 #include <QtCore/QtMath>
 #include <QtCore/QIODevice>
 
-#include <complex>
-#include <fftw3.h>
-
 #include "fft1d.hpp"
 
-#define DEFAULT_MAX 65536
-#define DEFAULT_RANGE 1024
+FFT1D::FFT1D(const unsigned int &size,
+             const double &inputMaxValue,
+             const double &outputMaxValue) :
+        size(size),
+        inputMaxValue(inputMaxValue),
+        outputMaxValue(outputMaxValue),
+        fftLock(1) {
 
-FFT1D::FFT1D(const unsigned int &size) : size(size) {
-    max = DEFAULT_MAX;
-    range = DEFAULT_RANGE;
+    input = (double *) fftw_malloc(sizeof(double) * this->size);
+    output = (double *) fftw_malloc(sizeof(double) * this->size);
 
-    updateOutputSize();
-
-    input = (double *) fftw_malloc(sizeof(double) * size);
-    output = (fftw_complex *) fftw_malloc((sizeof(fftw_complex) * (size / 2) + 1));
-
-    plan = fftw_plan_dft_r2c_1d(size, input, output, FFTW_MEASURE);
+    plan = fftw_plan_r2r_1d(this->size, this->input, this->output, FFTW_R2HC, FFTW_ESTIMATE);
 }
 
 FFT1D::~FFT1D() {
@@ -50,47 +46,38 @@ FFT1D::~FFT1D() {
     fftw_free(output);
 }
 
-unsigned int FFT1D::getMax() const {
-    return max;
-}
-
-void FFT1D::setMax(unsigned int value) {
-    FFT1D::max = value;
-}
-
-unsigned int FFT1D::getRange() const {
-    return range;
-}
-
-void FFT1D::setRange(unsigned int value) {
-    FFT1D::range = value;
-}
-
 QList<double> FFT1D::execute(const QList<double> &data) {
+    fftLock.acquire();
+
     for (int i = 0; i < size; i++)
-        input[i] = data[i];
+        input[i] = data[i] / inputMaxValue;
 
     fftw_execute(plan);
 
     QList<double> fft;
-    for (int i = 0; i <= outputSize; i++) {
-        double re = output[i][0] / (outputSize * max);
-        double im = output[i][1] / (outputSize * max);
-        double magnitude = qSqrt((re * re) + (im * im));
-        double mNorm = magnitude;
-        double logArg = 1 + (mNorm * 9);
-        double logValue = log10(logArg);
-        double magnitudeNormalized = logValue * range;
 
-        if (magnitudeNormalized > outputSize)
-            qDebug() << i << re << im << magnitude << outputSize << mNorm << logArg << logValue << magnitudeNormalized;
+    int samples = size / 2;
+    double factor = outputMaxValue / samples;
+
+    for (int i = 0; i <= samples; i++) {
+        double re = output[i];
+        double im = output[size - i];
+        double magnitude = qSqrt((re * re) + (im * im));
+        double magnitudeNormalized = magnitude * factor;
+
+//        double logArg = 1 + (magnitude1 * 9);
+//        double logValue = log10(logArg);
+//        double magnitudeNormalized = logValue * range;
+
+        if (magnitudeNormalized > outputMaxValue) {
+            qDebug() << i << re << im << magnitude << outputMaxValue << magnitudeNormalized;
+            magnitudeNormalized = outputMaxValue;
+        }
 
         fft.append(magnitudeNormalized);
     }
 
-    return fft;
-}
+    fftLock.release();
 
-void FFT1D::updateOutputSize() {
-    outputSize = size / 2;
+    return fft;
 }

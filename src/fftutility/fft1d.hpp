@@ -23,40 +23,40 @@
 #ifndef __FFTUTILITY__FFT__H
 #define __FFTUTILITY__FFT__H
 
-#include <complex>
+#include <QtCore/QSemaphore>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <complex.h>
 #include <fftw3.h>
+
+#ifdef __cplusplus
+}
+#endif
 
 class FFT1D {
 
 public:
 
-    FFT1D(const unsigned int &size);
+    FFT1D(const unsigned int &size, const double &inputMaxValue, const double &outputMaxValue);
 
     ~FFT1D();
 
     QList<double> execute(const QList<double> &data);
 
-    unsigned int getMax() const;
-
-    void setMax(unsigned int max);
-
-    unsigned int getRange() const;
-
-    void setRange(unsigned int range);
-
 private:
     const unsigned int size;
-    unsigned int max;
-    unsigned int range;
-
-    int outputSize;
+    const double inputMaxValue;
+    const double outputMaxValue;
 
     double *input;
-    fftw_complex *output;
+    double *output;
 
     fftw_plan plan;
 
-    void updateOutputSize();
+    QSemaphore fftLock;
 };
 
 #endif
