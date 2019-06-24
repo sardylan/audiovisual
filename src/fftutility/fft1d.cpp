@@ -57,17 +57,16 @@ QList<double> FFT1D::execute(const QList<double> &data) {
     QList<double> fft;
 
     int samples = size / 2;
-    double factor = outputMaxValue / samples;
 
     for (int i = 0; i <= samples; i++) {
         double re = output[i];
         double im = output[size - i];
         double magnitude = qSqrt((re * re) + (im * im));
-        double magnitudeNormalized = magnitude * factor;
+        double magnitudeUnity = magnitude / samples;
 
-//        double logArg = 1 + (magnitude1 * 9);
-//        double logValue = log10(logArg);
-//        double magnitudeNormalized = logValue * range;
+        double logArg = 1 + (magnitudeUnity * 9);
+        double logValue = log10(logArg);
+        double magnitudeNormalized = logValue * outputMaxValue;
 
         if (magnitudeNormalized > outputMaxValue) {
             qDebug() << i << re << im << magnitude << outputMaxValue << magnitudeNormalized;
