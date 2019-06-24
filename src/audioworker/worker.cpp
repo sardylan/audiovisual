@@ -57,8 +57,7 @@ void AudioWorker::setFormat(const QAudioFormat &value) {
 }
 
 void AudioWorker::start() {
-    fft1D = new FFT1D(fftSize);
-    fft1D->setRange(1024);
+    fft1D = new FFT1D(fftSize, qPow(2, format.sampleSize()) / 2, 1024);
 
     audioThread = new QThread(this);
     connect(audioThread, &QThread::finished, audioThread, &QThread::deleteLater);

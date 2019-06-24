@@ -90,7 +90,7 @@ void AudioVisual::toggleRun(bool value) {
                 qDebug() << audioFormat;
                 qDebug() << nearestFormat;
 
-                audioMaxValue = qPow(256, (int) (nearestFormat.sampleSize() / 8));
+                audioMaxValue = qPow(2, nearestFormat.sampleSize());
                 mainWindow->updateVuMeterMax(audioMaxValue);
 
                 audioWorker->setFormat(nearestFormat);
