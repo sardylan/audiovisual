@@ -28,7 +28,9 @@
 
 QTEST_MAIN(DSPTest)
 
+#define DSPTEST_DURATION_MS 10
 #define DSPTEST_SAMPLE_RATE 96000
+#define DSPTEST_SAMPLE_SIZE 16
 #define DSPTEST_TONE_FREQUENCY_SIGNAL 17200
 #define DSPTEST_TONE_FREQUENCY_BEAT 16500
 
@@ -39,41 +41,47 @@ void DSPTest::testDsp() {
     QList<double> expected;
     QList<double> actual;
 
-    double samplesPerPeriod;
+    const double signalPulse = 2 * M_PI * DSPTEST_TONE_FREQUENCY_SIGNAL;
+    const double beatPulse = 2 * M_PI * DSPTEST_TONE_FREQUENCY_BEAT;
+
+    const auto samples = (const unsigned int) (((double) DSPTEST_SAMPLE_RATE / 1000) * DSPTEST_DURATION_MS);
+    const auto sampleSize = (double) qPow(2, DSPTEST_SAMPLE_SIZE) / 2;
 
     qDebug() << "Computing input signal";
 
-    samplesPerPeriod = (double) DSPTEST_SAMPLE_RATE / DSPTEST_TONE_FREQUENCY_SIGNAL;
-    for (unsigned int i = 0; i < DSPTEST_SAMPLE_RATE; i++) {
-        double angle = (2 * M_PI) * ((double) i / samplesPerPeriod);
-        signal.append(qSin(angle));
+    for (unsigned int i = 0; i < samples; i++) {
+        double angle = signalPulse * ((double) i / DSPTEST_SAMPLE_RATE);
+        signal.append(qSin(angle) * sampleSize);
     }
 
     qDebug() << "Computing beat signal";
 
-    samplesPerPeriod = (double) DSPTEST_SAMPLE_RATE / DSPTEST_TONE_FREQUENCY_BEAT;
-    for (unsigned int i = 0; i < DSPTEST_SAMPLE_RATE; i++) {
-        double angle = (2 * M_PI) * ((double) i / samplesPerPeriod);
-        beat.append(qSin(angle));
+    for (unsigned int i = 0; i < samples; i++) {
+        double angle = beatPulse * ((double) i / DSPTEST_SAMPLE_RATE);
+        beat.append(qSin(angle) * sampleSize);
     }
 
     qDebug() << "Multiply signals";
 
-    for (unsigned int i = 0; i < DSPTEST_SAMPLE_RATE; i++)
+    for (unsigned int i = 0; i < samples; i++)
         input.append(signal[i] * beat[i]);
 
     qDebug() << "Computing FFT";
 
-    FFT1D fft1D(DSPTEST_SAMPLE_RATE);
-//    fft1D.setMax(1);
+    FFT1D fft1D((const unsigned int) samples);
+    fft1D.setMax(1024);
 
     actual = fft1D.execute(input);
 
     qDebug() << "Checking";
 
-    for (unsigned int i = 0; i < DSPTEST_SAMPLE_RATE / 2; i++) {
-        if (i == DSPTEST_TONE_FREQUENCY_SIGNAL - DSPTEST_TONE_FREQUENCY_BEAT
-            || i == DSPTEST_TONE_FREQUENCY_SIGNAL + DSPTEST_TONE_FREQUENCY_BEAT)
+    const double factor = (double) 1000 / DSPTEST_DURATION_MS;
+
+    for (unsigned int i = 0; i < (samples / 2); i++) {
+        qDebug() << (int) (i * factor) << "Hz" << actual[i];
+
+        if (i == ((DSPTEST_TONE_FREQUENCY_SIGNAL - DSPTEST_TONE_FREQUENCY_BEAT) / factor)
+            || i == ((DSPTEST_TONE_FREQUENCY_SIGNAL + DSPTEST_TONE_FREQUENCY_BEAT) / factor))
             QVERIFY2(actual[i] > 0.0,
                      QString("Error at %1. Value is %2").arg(i).arg(actual[i]).toStdString().c_str());
         else
