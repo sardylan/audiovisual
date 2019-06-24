@@ -28,11 +28,12 @@
 
 QTEST_MAIN(DSPTest)
 
-#define DSPTEST_DURATION_MS 10
+#define DSPTEST_DURATION_MS 1000
 #define DSPTEST_SAMPLE_RATE 96000
-#define DSPTEST_SAMPLE_SIZE 16
+#define DSPTEST_SAMPLE_SIZE 24
 #define DSPTEST_TONE_FREQUENCY_SIGNAL 17200
 #define DSPTEST_TONE_FREQUENCY_BEAT 16500
+#define DSPTEST_OUTPUT_MAX_VALUE 1024
 
 void DSPTest::testDsp() {
     QList<double> signal;
@@ -64,12 +65,11 @@ void DSPTest::testDsp() {
     qDebug() << "Multiply signals";
 
     for (unsigned int i = 0; i < samples; i++)
-        input.append(signal[i] * beat[i]);
+        input.append((signal[i] * beat[i]) / sampleSize);
 
     qDebug() << "Computing FFT";
 
-    FFT1D fft1D((const unsigned int) samples);
-    fft1D.setMax(1024);
+    FFT1D fft1D((const unsigned int) samples, sampleSize, DSPTEST_OUTPUT_MAX_VALUE);
 
     actual = fft1D.execute(input);
 
@@ -78,14 +78,18 @@ void DSPTest::testDsp() {
     const double factor = (double) 1000 / DSPTEST_DURATION_MS;
 
     for (unsigned int i = 0; i < (samples / 2); i++) {
-        qDebug() << (int) (i * factor) << "Hz" << actual[i];
+        if (i == (unsigned int) ((DSPTEST_TONE_FREQUENCY_SIGNAL - DSPTEST_TONE_FREQUENCY_BEAT) / factor)
+            || i == (unsigned int) (DSPTEST_TONE_FREQUENCY_SIGNAL / factor)
+            || i == (unsigned int) ((DSPTEST_TONE_FREQUENCY_SIGNAL + DSPTEST_TONE_FREQUENCY_BEAT) / factor))
+            qDebug() << QString("- at %1 Hz value is %2").arg(i * factor).arg((int) actual[i]).toStdString().c_str();
 
-        if (i == ((DSPTEST_TONE_FREQUENCY_SIGNAL - DSPTEST_TONE_FREQUENCY_BEAT) / factor)
-            || i == ((DSPTEST_TONE_FREQUENCY_SIGNAL + DSPTEST_TONE_FREQUENCY_BEAT) / factor))
-            QVERIFY2(actual[i] > 0.0,
+        if (i == (unsigned int) ((DSPTEST_TONE_FREQUENCY_SIGNAL - DSPTEST_TONE_FREQUENCY_BEAT) / factor)
+            || i == (unsigned int) ((DSPTEST_TONE_FREQUENCY_SIGNAL + DSPTEST_TONE_FREQUENCY_BEAT) / factor)) {
+            QVERIFY2((unsigned int) actual[i] > 0,
                      QString("Error at %1. Value is %2").arg(i).arg(actual[i]).toStdString().c_str());
-        else
-            QVERIFY2((int) actual[i] == 0.0,
+        } else {
+            QVERIFY2((unsigned int) actual[i] == 0,
                      QString("Error at %1. Value is %2").arg(i).arg(actual[i]).toStdString().c_str());
+        }
     }
 }
