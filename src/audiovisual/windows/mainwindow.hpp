@@ -52,6 +52,8 @@ public slots:
 
     void updateWaterfall(const QList<double> &data);
 
+    void updateWaterfallMaxFrequency(const unsigned int &maxFrequency);
+
 private:
     Ui::MainWindow *ui;
 

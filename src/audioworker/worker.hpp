@@ -91,6 +91,8 @@ signals:
 
     void newAudioData(const QByteArray &data);
 
+    void newMaxFrequency(const unsigned int &maxFrequency);
+
     void newAudioRms(const double &rms);
 
     void newAudioFFT(const QList<double> &fft);

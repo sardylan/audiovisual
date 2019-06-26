@@ -41,6 +41,10 @@ public slots:
 
     void addData(const QList<double> &value);
 
+    unsigned int getMaxFrequency() const;
+
+    void setMaxFrequency(unsigned int value);
+
 protected:
 
     void initializeGL() override;
@@ -49,10 +53,22 @@ protected:
 
     void paintGL() override;
 
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+    void enterEvent(QEvent *event) override;
+
+    void leaveEvent(QEvent *event) override;
+
 private:
     int width;
     int height;
+
+    int mousePosX;
+    bool showMousePos;
+
     QList<QList<double>> dataList;
+
+    unsigned int maxFrequency;
 
     void cleanDataList();
 

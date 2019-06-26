@@ -70,6 +70,8 @@ void AudioWorker::start() {
 
     audioThread->start();
 
+    emit newMaxFrequency(format.sampleRate());
+
     emit newStatus(true);
 }
 

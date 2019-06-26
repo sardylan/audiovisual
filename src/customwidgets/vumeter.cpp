@@ -131,31 +131,31 @@ void VUMeter::paintGL() {
 
     if (valueThreshold < warningThreshold) {
         glColor3f(0, 1, 0);
-        glVertex3f(-1, -1, 0);
-        glVertex3f(-1, 1, 0);
-        glVertex3f(valueThreshold, -1, 0);
-        glVertex3f(valueThreshold, 1, 0);
+        glVertex2f(-1, -1);
+        glVertex2f(-1, 1);
+        glVertex2f(valueThreshold, -1);
+        glVertex2f(valueThreshold, 1);
     } else if (valueThreshold < alertThreshold) {
         glColor3f(0, 1, 0);
-        glVertex3f(-1, -1, 0);
-        glVertex3f(-1, 1, 0);
-        glVertex3f(warningThreshold, -1, 0);
-        glVertex3f(warningThreshold, 1, 0);
+        glVertex2f(-1, -1);
+        glVertex2f(-1, 1);
+        glVertex2f(warningThreshold, -1);
+        glVertex2f(warningThreshold, 1);
         glColor3f(1, 1, 0);
-        glVertex3f(valueThreshold, -1, 0);
-        glVertex3f(valueThreshold, 1, 0);
+        glVertex2f(valueThreshold, -1);
+        glVertex2f(valueThreshold, 1);
     } else {
         glColor3f(0, 1, 0);
-        glVertex3f(-1, -1, 0);
-        glVertex3f(-1, 1, 0);
-        glVertex3f(warningThreshold, -1, 0);
-        glVertex3f(warningThreshold, 1, 0);
+        glVertex2f(-1, -1);
+        glVertex2f(-1, 1);
+        glVertex2f(warningThreshold, -1);
+        glVertex2f(warningThreshold, 1);
         glColor3f(1, 1, 0);
-        glVertex3f(alertThreshold, -1, 0);
-        glVertex3f(alertThreshold, 1, 0);
+        glVertex2f(alertThreshold, -1);
+        glVertex2f(alertThreshold, 1);
         glColor3f(1, 0, 0);
-        glVertex3f(valueThreshold, -1, 0);
-        glVertex3f(valueThreshold, 1, 0);
+        glVertex2f(valueThreshold, -1);
+        glVertex2f(valueThreshold, 1);
     }
 
     glEnd();

@@ -56,6 +56,7 @@ void AudioVisual::prepare() {
     connect(status, &Status::updateRunning, mainWindow, &MainWindow::updateRunning);
 
     connect(audioWorker, &AudioWorker::newStatus, status, &Status::setRunning);
+    connect(audioWorker, &AudioWorker::newMaxFrequency, this, &AudioVisual::newMaxFrequency);
     connect(audioWorker, &AudioWorker::newAudioRms, this, &AudioVisual::newAudioRms);
     connect(audioWorker, &AudioWorker::newAudioFFT, this, &AudioVisual::newAudioFFT);
 
@@ -107,6 +108,10 @@ void AudioVisual::toggleRun(bool value) {
 
 void AudioVisual::newGainValue(double value) {
     audioWorker->setGain(value);
+}
+
+void AudioVisual::newMaxFrequency(const unsigned int &maxFrequency) {
+    mainWindow->updateWaterfallMaxFrequency(maxFrequency);
 }
 
 void AudioVisual::newAudioRms(const double &rms) {

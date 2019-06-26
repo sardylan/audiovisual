@@ -21,6 +21,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QtMath>
+#include <QtGui/QOpenGLContext>
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
@@ -80,6 +81,10 @@ void MainWindow::updateVuMeter(const double &value) {
 
 void MainWindow::updateWaterfall(const QList<double> &data) {
     waterfall->addData(data);
+}
+
+void MainWindow::updateWaterfallMaxFrequency(const unsigned int &maxFrequency) {
+    waterfall->setMaxFrequency(maxFrequency);
 }
 
 void MainWindow::newGain() {
