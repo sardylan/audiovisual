@@ -39,6 +39,7 @@ Waterfall::Waterfall(QWidget *parent) : QOpenGLWidget(parent) {
 
     showMousePos = false;
     mousePosX = 0;
+    maxFrequency = 0;
 }
 
 Waterfall::~Waterfall() = default;
@@ -57,56 +58,78 @@ void Waterfall::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0, width, height, 0);
+    gluOrtho2D(0, 1, height, 0);
 
     if (width == 0 || height == 0)
         return;
-
-    const unsigned int interval = width / 96;
-    const unsigned int intervalBig = interval * 3;
 
     for (int y = 0; y < height && y < dataList.size(); y++) {
         QList<double> lineList = dataList.at((dataList.size() - 1) - y);
 
         glBegin(GL_LINE_STRIP);
 
-        glVertex2i(-1, y);
+        glVertex2i(0, y);
 
-        for (int x = 0; x < lineList.size(); x++) {
-            double value = lineList.at(x);
+        for (int listX = 0; listX < lineList.size(); listX++) {
+            double value = lineList.at(listX);
             QColor qColor = computeRgbValue(value);
             glColor3f(qColor.redF(), qColor.greenF(), qColor.blueF());
-            glVertex2i(x, y);
+
+            float x = (float) listX / lineList.size();
+            glVertex2f(x, y);
         }
 
         glEnd();
     }
 
-    for (int x = 0; x < width; x += interval) {
+    unsigned int interval = 0;
+    unsigned int intervalBig = 0;
+
+    if (maxFrequency == 8000) {
+        interval = 500;
+        intervalBig = 1000;
+    } else if (maxFrequency == 11025) {
+        interval = 500;
+        intervalBig = 1000;
+    } else if (maxFrequency == 22050) {
+        interval = 1000;
+        intervalBig = 2000;
+    } else if (maxFrequency == 44100) {
+        interval = 2000;
+        intervalBig = 4000;
+    } else if (maxFrequency == 48000) {
+        interval = 2000;
+        intervalBig = 4000;
+    } else if (maxFrequency == 96000) {
+        interval = 4000;
+        intervalBig = 8000;
+    }
+
+    if (interval > 0) {
+        for (int iterX = 0; iterX < maxFrequency; iterX += interval) {
+            glBegin(GL_LINES);
+
+            if (iterX % intervalBig == 0)
+                glColor4ub(64, 64, 64, 128);
+            else
+                glColor4ub(32, 32, 32, 128);
+
+            float x = (float) iterX / maxFrequency;
+            glVertex2f(x, 0);
+            glVertex2f(x, height);
+
+            glEnd();
+        }
+    }
+
+    if (showMousePos) {
+        float x = (float) mousePosX / width;
         glBegin(GL_LINES);
-
-        if (x % intervalBig == 0)
-            glColor4ub(64, 64, 64, 128);
-        else
-            glColor4ub(32, 32, 32, 128);
-
+        glColor3f(128, 128, 128);
         glVertex2f(x, 0);
         glVertex2f(x, height);
         glEnd();
     }
-
-    if (showMousePos) {
-        glBegin(GL_LINES);
-        glColor3f(128, 128, 128);
-        glVertex2f(mousePosX, 0);
-        glVertex2f(mousePosX, height);
-        glEnd();
-    }
-
-    glBegin(GL_POINTS);
-    glColor3f(255, 255, 255);
-    glVertex2i(10, 10);
-    glEnd();
 }
 
 void Waterfall::mouseMoveEvent(QMouseEvent *event) {
