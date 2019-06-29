@@ -63,6 +63,8 @@ void AudioVisual::prepare() {
     connect(mainWindow, &MainWindow::showConfiguration, this, &AudioVisual::showConfiguration);
     connect(mainWindow, &MainWindow::toggleRunning, this, &AudioVisual::toggleRun);
     connect(mainWindow, &MainWindow::newGainValue, this, &AudioVisual::newGainValue);
+    connect(mainWindow, &MainWindow::newBfoState, audioWorker, &AudioWorker::setBfoEnabled);
+    connect(mainWindow, &MainWindow::newBfoFrequency, audioWorker, &AudioWorker::setBfoFrequency);
 }
 
 int AudioVisual::run() {

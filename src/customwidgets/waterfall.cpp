@@ -135,6 +135,11 @@ void Waterfall::paintGL() {
 void Waterfall::mouseMoveEvent(QMouseEvent *event) {
     mousePosX = event->pos().x();
     update();
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto frequency = (unsigned int) (((double) mousePosX / width) * maxFrequency);
+        emit newClickFrequency(frequency);
+    }
 }
 
 void Waterfall::enterEvent(QEvent *event) {

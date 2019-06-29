@@ -75,6 +75,10 @@ private:
     static QColor computeRgbValue(int value);
 
     static QColor computeRgbValue(double value);
+
+signals:
+
+    void newClickFrequency(unsigned int frequency);
 };
 
 #endif

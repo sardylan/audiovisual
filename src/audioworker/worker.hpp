@@ -62,13 +62,13 @@ public:
 
     void setOutputFormat(const QAudioFormat &value);
 
-    bool isBeatEnabled() const;
+    bool isBfoEnabled() const;
 
-    void setBeatEnabled(bool value);
+    void setBfoEnabled(bool value);
 
-    unsigned int getBeatFrequency() const;
+    unsigned int getBfoFrequency() const;
 
-    void setBeatFrequency(unsigned int value);
+    void setBfoFrequency(unsigned int value);
 
 public slots:
 
@@ -99,9 +99,9 @@ private:
     FFT1D *fft1D;
     unsigned int fftSize;
 
-    bool beatEnabled;
-    unsigned int beatFrequency;
-    double beatAngle;
+    bool bfoEnabled;
+    unsigned int bfoFrequency;
+    double bfoAngle;
 
     double gain;
 

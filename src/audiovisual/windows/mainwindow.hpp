@@ -68,6 +68,10 @@ private slots:
 
     void newGain();
 
+    void handleNewBfoState(int state);
+
+    void handleNewBfoFrequency(unsigned int frequency);
+
 signals:
 
     void showConfiguration();
@@ -75,6 +79,10 @@ signals:
     void toggleRunning(bool value);
 
     void newGainValue(double value);
+
+    void newBfoState(bool enabled);
+
+    void newBfoFrequency(unsigned int frequency);
 };
 
 #endif

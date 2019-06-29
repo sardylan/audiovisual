@@ -34,9 +34,9 @@ AudioWorker::AudioWorker(QObject *parent) : QObject(parent) {
     fftSize = 0;
     gain = 1;
 
-    beatEnabled = false;
-    beatFrequency = 0;
-    beatAngle = 0;
+    bfoEnabled = false;
+    bfoFrequency = 0;
+    bfoAngle = 0;
 }
 
 AudioWorker::~AudioWorker() = default;
@@ -75,20 +75,20 @@ void AudioWorker::setOutputFormat(const QAudioFormat &value) {
     outputFormat = value;
 }
 
-bool AudioWorker::isBeatEnabled() const {
-    return beatEnabled;
+bool AudioWorker::isBfoEnabled() const {
+    return bfoEnabled;
 }
 
-void AudioWorker::setBeatEnabled(bool value) {
-    AudioWorker::beatEnabled = value;
+void AudioWorker::setBfoEnabled(bool value) {
+    AudioWorker::bfoEnabled = value;
 }
 
-unsigned int AudioWorker::getBeatFrequency() const {
-    return beatFrequency;
+unsigned int AudioWorker::getBfoFrequency() const {
+    return bfoFrequency;
 }
 
-void AudioWorker::setBeatFrequency(unsigned int value) {
-    AudioWorker::beatFrequency = value;
+void AudioWorker::setBfoFrequency(unsigned int value) {
+    AudioWorker::bfoFrequency = value;
 }
 
 void AudioWorker::start() {
@@ -201,7 +201,7 @@ void AudioWorker::parsePayload(const QByteArray &payloadData) {
 
     QList<double> outputValues;
 
-    if (beatEnabled)
+    if (bfoEnabled)
         outputValues = DSP::multiply(values, values);
     else
         outputValues = values;

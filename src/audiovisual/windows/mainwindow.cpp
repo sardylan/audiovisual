@@ -62,6 +62,9 @@ void MainWindow::signalConnect() {
     connect(ui->actionRun, &QAction::triggered, this, &MainWindow::toggleRunning);
 
     connect(ui->gainSlider, &QAbstractSlider::valueChanged, this, &MainWindow::newGain);
+
+    connect(ui->bfoCheckBox, &QCheckBox::stateChanged, this, &MainWindow::handleNewBfoState);
+    connect(waterfall, &Waterfall::newClickFrequency, this, &MainWindow::handleNewBfoFrequency);
 }
 
 void MainWindow::updateRunning(bool value) {
@@ -94,4 +97,18 @@ void MainWindow::newGain() {
     ui->gainValue->setText(QString().setNum(logValue, 'f', 2));
 
     emit newGainValue(logValue);
+}
+
+void MainWindow::handleNewBfoState(int state) {
+    bool newState = false;
+
+    if (state == Qt::Checked)
+        newState = true;
+
+    emit newBfoState(newState);
+}
+
+void MainWindow::handleNewBfoFrequency(unsigned int frequency) {
+    ui->bfoFrequenctValue->setText(QString("%1").arg(frequency));
+    emit newBfoFrequency(frequency);
 }
