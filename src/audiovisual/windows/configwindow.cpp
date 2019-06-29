@@ -53,13 +53,25 @@ void ConfigWindow::signalConnect() {
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
             this,
             &ConfigWindow::updateDeviceOptions);
+
+    connect(ui->audioOutputDeviceComboBox,
+            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+            this,
+            &ConfigWindow::updateOutputDeviceOptions);
 }
 
 void ConfigWindow::initUi() {
     ui->audioDeviceComboBox->clear();
     ui->audioDeviceComboBox->addItem("");
+
     for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioInput))
         ui->audioDeviceComboBox->addItem(audioDeviceInfo.deviceName(), QVariant::fromValue(audioDeviceInfo));
+
+    ui->audioOutputDeviceComboBox->clear();
+    ui->audioOutputDeviceComboBox->addItem("");
+
+    for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
+        ui->audioOutputDeviceComboBox->addItem(audioDeviceInfo.deviceName(), QVariant::fromValue(audioDeviceInfo));
 }
 
 void ConfigWindow::load() {
@@ -80,6 +92,23 @@ void ConfigWindow::load() {
     }
 
     updateDeviceOptions();
+
+    index = -1;
+    for (int i = 0; i < ui->audioOutputDeviceComboBox->count(); i++)
+        if (ui->audioOutputDeviceComboBox->itemData(i).value<QAudioDeviceInfo>().deviceName() ==
+            config->getAudioOutputDevice()) {
+            index = i;
+            break;
+        }
+
+    if (index != -1) {
+        ui->audioOutputDeviceComboBox->setCurrentIndex(index);
+    } else {
+        ui->audioOutputDeviceComboBox->setItemText(0, QString("%1 [NOT PRESENT]").arg(config->getAudioOutputDevice()));
+        ui->audioOutputDeviceComboBox->setCurrentIndex(0);
+    }
+
+    updateOutputDeviceOptions();
 }
 
 void ConfigWindow::save() {
@@ -88,6 +117,13 @@ void ConfigWindow::save() {
     config->setAudioSampleRate(ui->audioSampleRateComboBox->currentData().value<int>());
     config->setAudioSampleSize(ui->audioSampleSizeComboBox->currentData().value<int>());
     config->setAudioSampleType(ui->audioSampleTypeComboBox->currentData().value<QAudioFormat::SampleType>());
+
+    config->setAudioOutputDevice(ui->audioOutputDeviceComboBox->currentData().value<QAudioDeviceInfo>().deviceName());
+    config->setAudioOutputChannels(ui->audioOutputChannelsComboBox->currentData().value<int>());
+    config->setAudioOutputSampleRate(ui->audioOutputSampleRateComboBox->currentData().value<int>());
+    config->setAudioOutputSampleSize(ui->audioOutputSampleSizeComboBox->currentData().value<int>());
+    config->setAudioOutputSampleType(
+            ui->audioOutputSampleTypeComboBox->currentData().value<QAudioFormat::SampleType>());
 
     ConfigManager::save();
 }
@@ -100,6 +136,12 @@ void ConfigWindow::checkStatus() {
     ui->audioSampleRateComboBox->setEnabled(enabled);
     ui->audioSampleSizeComboBox->setEnabled(enabled);
     ui->audioSampleTypeComboBox->setEnabled(enabled);
+
+    ui->audioOutputDeviceComboBox->setEnabled(enabled);
+    ui->audioOutputChannelsComboBox->setEnabled(enabled);
+    ui->audioOutputSampleRateComboBox->setEnabled(enabled);
+    ui->audioOutputSampleSizeComboBox->setEnabled(enabled);
+    ui->audioOutputSampleTypeComboBox->setEnabled(enabled);
 }
 
 void ConfigWindow::handleOK() {
@@ -178,6 +220,69 @@ void ConfigWindow::updateDeviceOptions() {
         if (ui->audioSampleTypeComboBox->itemData(i).value<QAudioFormat::SampleType>() ==
             config->getAudioSampleType()) {
             ui->audioSampleTypeComboBox->setCurrentIndex(i);
+            break;
+        }
+}
+
+void ConfigWindow::updateOutputDeviceOptions() {
+    const QAudioDeviceInfo &audioDeviceInfo = ui->audioOutputDeviceComboBox->currentData().value<QAudioDeviceInfo>();
+
+    ui->audioOutputChannelsComboBox->clear();
+    for (int channelCount: audioDeviceInfo.supportedChannelCounts())
+        ui->audioOutputChannelsComboBox->addItem(QString("%1").arg(channelCount), QVariant::fromValue(channelCount));
+
+    for (int i = 0; i < ui->audioOutputChannelsComboBox->count(); i++)
+        if (ui->audioOutputChannelsComboBox->itemData(i).value<int>() == config->getAudioChannels()) {
+            ui->audioOutputChannelsComboBox->setCurrentIndex(i);
+            break;
+        }
+
+    ui->audioOutputSampleRateComboBox->clear();
+    for (int sampleRate: audioDeviceInfo.supportedSampleRates())
+        ui->audioOutputSampleRateComboBox->addItem(QString("%1 Hz").arg(sampleRate), QVariant::fromValue(sampleRate));
+
+    for (int i = 0; i < ui->audioOutputSampleRateComboBox->count(); i++)
+        if (ui->audioOutputSampleRateComboBox->itemData(i).value<int>() == config->getAudioSampleRate()) {
+            ui->audioOutputSampleRateComboBox->setCurrentIndex(i);
+            break;
+        }
+
+    ui->audioOutputSampleSizeComboBox->clear();
+    for (int sampleSize: audioDeviceInfo.supportedSampleSizes())
+        ui->audioOutputSampleSizeComboBox->addItem(QString("%1 bit").arg(sampleSize), QVariant::fromValue(sampleSize));
+
+    for (int i = 0; i < ui->audioOutputSampleSizeComboBox->count(); i++)
+        if (ui->audioOutputSampleSizeComboBox->itemData(i).value<int>() == config->getAudioSampleSize()) {
+            ui->audioOutputSampleSizeComboBox->setCurrentIndex(i);
+            break;
+        }
+
+    ui->audioOutputSampleTypeComboBox->clear();
+    for (QAudioFormat::SampleType sampleType: audioDeviceInfo.supportedSampleTypes()) {
+        QString text;
+
+        switch (sampleType) {
+            case QAudioFormat::Unknown:
+                text = "Unknown";
+                break;
+            case QAudioFormat::SignedInt:
+                text = "Signed";
+                break;
+            case QAudioFormat::UnSignedInt:
+                text = "Unsigned";
+                break;
+            case QAudioFormat::Float:
+                text = "Float";
+                break;
+        }
+
+        ui->audioOutputSampleTypeComboBox->addItem(text, QVariant::fromValue(sampleType));
+    }
+
+    for (int i = 0; i < ui->audioOutputSampleTypeComboBox->count(); i++)
+        if (ui->audioOutputSampleTypeComboBox->itemData(i).value<QAudioFormat::SampleType>() ==
+            config->getAudioSampleType()) {
+            ui->audioOutputSampleTypeComboBox->setCurrentIndex(i);
             break;
         }
 }

@@ -66,6 +66,8 @@ private slots:
 
     void updateDeviceOptions();
 
+    void updateOutputDeviceOptions();
+
 };
 
 #endif
