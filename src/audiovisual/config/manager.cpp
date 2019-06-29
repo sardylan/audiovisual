@@ -37,6 +37,15 @@ void ConfigManager::load() {
     config->setAudioSampleType(
             settings.value("sampleType", CONFIG_AUDIO_SAMPLE_TYPE_DEFAULT).value<QAudioFormat::SampleType>());
     settings.endGroup();
+
+    settings.beginGroup("audioOutput");
+    config->setAudioOutputDevice(settings.value("device", CONFIG_AUDIO_OUTPUT_DEVICE_DEFAULT).toString());
+    config->setAudioOutputChannels(settings.value("channels", CONFIG_AUDIO_OUTPUT_CHANNELS_DEFAULT).toInt());
+    config->setAudioOutputSampleRate(settings.value("sampleRate", CONFIG_AUDIO_OUTPUT_SAMPLE_RATE_DEFAULT).toInt());
+    config->setAudioOutputSampleSize(settings.value("sampleSize", CONFIG_AUDIO_OUTPUT_SAMPLE_SIZE_DEFAULT).toInt());
+    config->setAudioOutputSampleType(
+            settings.value("sampleType", CONFIG_AUDIO_OUTPUT_SAMPLE_TYPE_DEFAULT).value<QAudioFormat::SampleType>());
+    settings.endGroup();
 }
 
 void ConfigManager::save() {
@@ -49,6 +58,14 @@ void ConfigManager::save() {
     settings.setValue("sampleRate", config->getAudioSampleRate());
     settings.setValue("sampleSize", config->getAudioSampleSize());
     settings.setValue("sampleType", config->getAudioSampleType());
+    settings.endGroup();
+
+    settings.beginGroup("audioOutput");
+    settings.setValue("device", config->getAudioOutputDevice());
+    settings.setValue("channels", config->getAudioOutputChannels());
+    settings.setValue("sampleRate", config->getAudioOutputSampleRate());
+    settings.setValue("sampleSize", config->getAudioOutputSampleSize());
+    settings.setValue("sampleType", config->getAudioOutputSampleType());
     settings.endGroup();
 
     settings.sync();

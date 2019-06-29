@@ -39,6 +39,12 @@ private:
     int audioSampleSize;
     QAudioFormat::SampleType audioSampleType;
 
+    QString audioOutputDevice;
+    int audioOutputChannels;
+    int audioOutputSampleRate;
+    int audioOutputSampleSize;
+    QAudioFormat::SampleType audioOutputSampleType;
+
 public:
     static Config *getInstance();
 
@@ -61,6 +67,26 @@ public:
     QAudioFormat::SampleType getAudioSampleType() const;
 
     void setAudioSampleType(QAudioFormat::SampleType value);
+
+    const QString &getAudioOutputDevice() const;
+
+    void setAudioOutputDevice(const QString &audioOutputDevice);
+
+    int getAudioOutputChannels() const;
+
+    void setAudioOutputChannels(int audioOutputChannels);
+
+    int getAudioOutputSampleRate() const;
+
+    void setAudioOutputSampleRate(int audioOutputSampleRate);
+
+    int getAudioOutputSampleSize() const;
+
+    void setAudioOutputSampleSize(int audioOutputSampleSize);
+
+    QAudioFormat::SampleType getAudioOutputSampleType() const;
+
+    void setAudioOutputSampleType(QAudioFormat::SampleType audioOutputSampleType);
 };
 
 #endif

@@ -37,6 +37,12 @@ Config::Config() {
     audioSampleRate = CONFIG_AUDIO_SAMPLE_RATE_DEFAULT;
     audioSampleSize = CONFIG_AUDIO_SAMPLE_SIZE_DEFAULT;
     audioSampleType = CONFIG_AUDIO_SAMPLE_TYPE_DEFAULT;
+
+    audioOutputDevice = CONFIG_AUDIO_OUTPUT_DEVICE_DEFAULT;
+    audioOutputChannels = CONFIG_AUDIO_OUTPUT_CHANNELS_DEFAULT;
+    audioOutputSampleRate = CONFIG_AUDIO_OUTPUT_SAMPLE_RATE_DEFAULT;
+    audioOutputSampleSize = CONFIG_AUDIO_OUTPUT_SAMPLE_SIZE_DEFAULT;
+    audioOutputSampleType = CONFIG_AUDIO_OUTPUT_SAMPLE_TYPE_DEFAULT;
 }
 
 const QString &Config::getAudioDevice() const {
@@ -77,4 +83,44 @@ QAudioFormat::SampleType Config::getAudioSampleType() const {
 
 void Config::setAudioSampleType(QAudioFormat::SampleType value) {
     Config::audioSampleType = value;
+}
+
+const QString &Config::getAudioOutputDevice() const {
+    return audioOutputDevice;
+}
+
+void Config::setAudioOutputDevice(const QString &value) {
+    Config::audioOutputDevice = value;
+}
+
+int Config::getAudioOutputChannels() const {
+    return audioOutputChannels;
+}
+
+void Config::setAudioOutputChannels(int value) {
+    Config::audioOutputChannels = value;
+}
+
+int Config::getAudioOutputSampleRate() const {
+    return audioOutputSampleRate;
+}
+
+void Config::setAudioOutputSampleRate(int value) {
+    Config::audioOutputSampleRate = value;
+}
+
+int Config::getAudioOutputSampleSize() const {
+    return audioOutputSampleSize;
+}
+
+void Config::setAudioOutputSampleSize(int value) {
+    Config::audioOutputSampleSize = value;
+}
+
+QAudioFormat::SampleType Config::getAudioOutputSampleType() const {
+    return audioOutputSampleType;
+}
+
+void Config::setAudioOutputSampleType(QAudioFormat::SampleType value) {
+    Config::audioOutputSampleType = value;
 }
