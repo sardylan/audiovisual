@@ -77,29 +77,48 @@ void AudioVisual::showConfiguration() {
 
 void AudioVisual::toggleRun(bool value) {
     if (value) {
-        for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioInput)) {
-            if (audioDeviceInfo.deviceName() == config->getAudioDevice()) {
-                audioWorker->setDeviceInfo(audioDeviceInfo);
+        QAudioDeviceInfo audioInputDeviceInfo;
+        QAudioDeviceInfo audioOutputDeviceInfo;
 
-                QAudioFormat audioFormat;
-                audioFormat.setChannelCount(config->getAudioChannels());
-                audioFormat.setSampleRate(config->getAudioSampleRate());
-                audioFormat.setSampleSize(config->getAudioSampleSize());
-                audioFormat.setSampleType(config->getAudioSampleType());
+        for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioInput))
+            if (audioDeviceInfo.deviceName() == config->getAudioDevice())
+                audioInputDeviceInfo = audioDeviceInfo;
 
-                const QAudioFormat &nearestFormat = audioDeviceInfo.nearestFormat(audioFormat);
-                qDebug() << audioFormat;
-                qDebug() << nearestFormat;
+        for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
+            if (audioDeviceInfo.deviceName() == config->getAudioOutputDevice())
+                audioOutputDeviceInfo = audioDeviceInfo;
 
-                audioMaxValue = qPow(2, nearestFormat.sampleSize());
-                mainWindow->updateVuMeterMax(audioMaxValue);
+        audioWorker->setDeviceInfo(audioInputDeviceInfo);
+        audioWorker->setDeviceOutputInfo(audioOutputDeviceInfo);
 
-                audioWorker->setFormat(nearestFormat);
-                audioWorker->start();
+        QAudioFormat audioInputFormat;
+        audioInputFormat.setChannelCount(config->getAudioChannels());
+        audioInputFormat.setSampleRate(config->getAudioSampleRate());
+        audioInputFormat.setSampleSize(config->getAudioSampleSize());
+        audioInputFormat.setSampleType(config->getAudioSampleType());
+        const QAudioFormat &nearestInputFormat = audioInputDeviceInfo.nearestFormat(audioInputFormat);
 
-                status->setRunning(true);
-            }
-        }
+        QAudioFormat audioOutputFormat;
+        audioOutputFormat.setChannelCount(config->getAudioChannels());
+        audioOutputFormat.setSampleRate(config->getAudioSampleRate());
+        audioOutputFormat.setSampleSize(config->getAudioSampleSize());
+        audioOutputFormat.setSampleType(config->getAudioSampleType());
+        const QAudioFormat &nearestOutputFormat = audioOutputDeviceInfo.nearestFormat(audioOutputFormat);
+
+        qDebug() << audioInputFormat;
+        qDebug() << nearestInputFormat;
+        qDebug() << audioOutputFormat;
+        qDebug() << nearestOutputFormat;
+
+        audioMaxValue = qPow(2, nearestInputFormat.sampleSize());
+        mainWindow->updateVuMeterMax(audioMaxValue);
+
+        audioWorker->setFormat(nearestInputFormat);
+        audioWorker->setOutputFormat(nearestOutputFormat);
+
+        audioWorker->start();
+
+        status->setRunning(true);
     } else {
         audioWorker->stop();
         status->setRunning(false);

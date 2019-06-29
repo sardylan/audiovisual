@@ -23,8 +23,7 @@
 #ifndef __AUDIOVISUAL__DSP__DSP__H
 #define __AUDIOVISUAL__DSP__DSP__H
 
-#include <complex>
-#include <fftw3.h>
+#include <QtCore/QList>
 
 class DSP {
 
@@ -34,6 +33,7 @@ public:
 
     ~DSP();
 
+    static const QList<double> multiply(QList<double> &signal, QList<double> &beat);
 };
 
 #endif

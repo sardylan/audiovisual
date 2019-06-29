@@ -22,10 +22,9 @@
 #include <QtCore/QDebug>
 #include <QtCore/QtMath>
 #include <QtCore/QIODevice>
-
-#include <complex>
-#include <fftw3.h>
 #include <QtConcurrent/QtConcurrent>
+
+#include <dsp.hpp>
 
 #include "worker.hpp"
 
@@ -34,6 +33,10 @@ AudioWorker::AudioWorker(QObject *parent) : QObject(parent) {
 
     fftSize = 0;
     gain = 1;
+
+    beatEnabled = false;
+    beatFrequency = 0;
+    beatAngle = 0;
 }
 
 AudioWorker::~AudioWorker() = default;
@@ -56,19 +59,60 @@ void AudioWorker::setFormat(const QAudioFormat &value) {
     fftSize = format.sampleRate() / 10;
 }
 
+const QAudioDeviceInfo &AudioWorker::getDeviceOutputInfo() const {
+    return deviceOutputInfo;
+}
+
+void AudioWorker::setDeviceOutputInfo(const QAudioDeviceInfo &value) {
+    AudioWorker::deviceOutputInfo = value;
+}
+
+const QAudioFormat &AudioWorker::getOutputFormat() const {
+    return outputFormat;
+}
+
+void AudioWorker::setOutputFormat(const QAudioFormat &value) {
+    outputFormat = value;
+}
+
+bool AudioWorker::isBeatEnabled() const {
+    return beatEnabled;
+}
+
+void AudioWorker::setBeatEnabled(bool value) {
+    AudioWorker::beatEnabled = value;
+}
+
+unsigned int AudioWorker::getBeatFrequency() const {
+    return beatFrequency;
+}
+
+void AudioWorker::setBeatFrequency(unsigned int value) {
+    AudioWorker::beatFrequency = value;
+}
+
 void AudioWorker::start() {
     fft1D = new FFT1D(fftSize, qPow(2, format.sampleSize()) / 2, 1024);
 
     audioThread = new QThread(this);
-    connect(audioThread, &QThread::finished, audioThread, &QThread::deleteLater);
+    audioOutputThread = new QThread(this);
 
-    audioInput = new QAudioInput(deviceInfo, format);
+    connect(audioThread, &QThread::finished, audioThread, &QThread::deleteLater);
+    connect(audioOutputThread, &QThread::finished, audioOutputThread, &QThread::deleteLater);
+
+    audioInput = new QAudioInput(deviceInfo, format, nullptr);
+    audioOutput = new QAudioOutput(deviceOutputInfo, outputFormat, nullptr);
+
     audioInput->moveToThread(audioThread);
+    audioOutput->moveToThread(audioOutputThread);
 
     ioDevice = audioInput->start();
     connect(ioDevice, &QIODevice::readyRead, this, &AudioWorker::readAvailableData);
 
+    ioOutputDevice = audioOutput->start();
+
     audioThread->start();
+    audioOutputThread->start();
 
     emit newMaxFrequency(format.sampleRate());
 
@@ -84,6 +128,12 @@ void AudioWorker::stop() {
     audioThread->quit();
     audioThread->deleteLater();
 
+    audioOutput->stop();
+    audioOutput->deleteLater();
+
+    audioOutputThread->quit();
+    audioOutputThread->deleteLater();
+
     emit newStatus(false);
 }
 
@@ -92,6 +142,8 @@ void AudioWorker::readAvailableData() {
     int bytes = format.sampleSize() / 8;
     int increment = channels * bytes;
 
+    unsigned int shift = (fftSize) * increment;
+
     while (true) {
         char c;
         qint64 bytesRead = ioDevice->read(&c, 1);
@@ -99,11 +151,11 @@ void AudioWorker::readAvailableData() {
             return;
 
         rawData.append(c);
-        if (rawData.length() == (fftSize) * increment)
+        if (rawData.length() == shift)
             break;
     }
 
-    if (rawData.length() != (fftSize) * increment)
+    if (rawData.length() != shift)
         return;
 
     parsePayload(rawData);
@@ -147,6 +199,15 @@ void AudioWorker::parsePayload(const QByteArray &payloadData) {
         values.append(v);
     }
 
+    QList<double> outputValues;
+
+    if (beatEnabled)
+        outputValues = DSP::multiply(values, values);
+    else
+        outputValues = values;
+
+    QtConcurrent::run(this, &AudioWorker::sendOutputAudio, outputValues);
+
     QtConcurrent::run(this, &AudioWorker::computeRMS, values);
     QtConcurrent::run(this, &AudioWorker::computeFFT, values);
 }
@@ -173,4 +234,31 @@ double AudioWorker::getGain() const {
 
 void AudioWorker::setGain(double value) {
     AudioWorker::gain = value;
+}
+
+void AudioWorker::sendOutputAudio(const QList<double> &value) {
+    QByteArray data;
+
+    int bytesPerSample = format.sampleSize() / 8;
+
+    char bytes[bytesPerSample];
+
+    for (double v : value) {
+        if (format.sampleSize() == 16
+            && format.sampleType() == QAudioFormat::SignedInt
+            && format.byteOrder() == QAudioFormat::LittleEndian) {
+            auto b = static_cast<qint16>(v);
+            qToLittleEndian<qint16>(b, bytes);
+        } else
+            continue;
+
+        for (int c = 0; c < format.channelCount(); c++)
+            for (int j = 0; j < bytesPerSample; j++)
+                data.append(bytes[j]);
+    }
+
+    if (data.length() == 0)
+        return;
+
+    ioOutputDevice->write(data);
 }

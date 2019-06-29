@@ -26,11 +26,13 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QByteArray>
+#include <QtCore/QDataStream>
 #include <QtCore/QThread>
 #include <QtMultimedia/QAudioFormat>
 #include <QtMultimedia/QAudioInput>
 
 #include <fft1d.hpp>
+#include <QtMultimedia/QAudioOutput>
 
 
 class AudioWorker : public QObject {
@@ -52,6 +54,22 @@ public:
 
     double getGain() const;
 
+    const QAudioDeviceInfo &getDeviceOutputInfo() const;
+
+    void setDeviceOutputInfo(const QAudioDeviceInfo &value);
+
+    const QAudioFormat &getOutputFormat() const;
+
+    void setOutputFormat(const QAudioFormat &value);
+
+    bool isBeatEnabled() const;
+
+    void setBeatEnabled(bool value);
+
+    unsigned int getBeatFrequency() const;
+
+    void setBeatFrequency(unsigned int value);
+
 public slots:
 
     void start();
@@ -70,8 +88,20 @@ private:
     QThread *audioThread;
     QByteArray rawData;
 
+    QAudioDeviceInfo deviceOutputInfo;
+    QAudioFormat outputFormat;
+
+    QAudioOutput *audioOutput;
+    QIODevice *ioOutputDevice;
+
+    QThread *audioOutputThread;
+
     FFT1D *fft1D;
     unsigned int fftSize;
+
+    bool beatEnabled;
+    unsigned int beatFrequency;
+    double beatAngle;
 
     double gain;
 
@@ -80,6 +110,8 @@ private:
     void computeRMS(QList<double> &values);
 
     void computeFFT(QList<double> &values);
+
+    void sendOutputAudio(const QList<double> &value);
 
 private slots:
 

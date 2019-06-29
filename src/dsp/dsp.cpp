@@ -22,10 +22,15 @@
 
 #include "dsp.hpp"
 
-DSP::DSP() {
+DSP::DSP() = default;
 
-}
+DSP::~DSP() = default;
 
-DSP::~DSP() {
+const QList<double> DSP::multiply(QList<double> &signal, QList<double> &beat) {
+    QList<double> output;
 
+    for (int i = 0; i < signal.length() && i < beat.length(); i++)
+        output.append(signal[i] * beat[i]);
+
+    return output;
 }

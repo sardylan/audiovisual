@@ -16,6 +16,7 @@ add_library(audioworker
 
 target_link_libraries(audioworker
         fftutility
+        dsp
         Qt5::Core
         Qt5::Multimedia
         Qt5::Concurrent
