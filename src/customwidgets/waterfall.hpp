@@ -37,13 +37,21 @@ public:
 
     ~Waterfall() override;
 
+    unsigned int getMaxFrequency() const;
+
+    bool isBfoEnabled() const;
+
+    unsigned int getBfoFrequency() const;
+
 public slots:
 
     void addData(const QList<double> &value);
 
-    unsigned int getMaxFrequency() const;
-
     void setMaxFrequency(unsigned int value);
+
+    void setBfoEnabled(bool value);
+
+    void setBfoFrequency(unsigned int value);
 
 protected:
 
@@ -69,6 +77,9 @@ private:
     QList<QList<double>> dataList;
 
     unsigned int maxFrequency;
+
+    bool bfoEnabled;
+    unsigned int bfoFrequency;
 
     void cleanDataList();
 

@@ -59,6 +59,8 @@ void AudioVisual::prepare() {
     connect(audioWorker, &AudioWorker::newMaxFrequency, this, &AudioVisual::newMaxFrequency);
     connect(audioWorker, &AudioWorker::newAudioRms, this, &AudioVisual::newAudioRms);
     connect(audioWorker, &AudioWorker::newAudioFFT, this, &AudioVisual::newAudioFFT);
+    connect(audioWorker, &AudioWorker::newBfoStatus, mainWindow, &MainWindow::updateBfoStatus);
+    connect(audioWorker, &AudioWorker::newBfoFrequency, mainWindow, &MainWindow::updateBfoFrequency);
 
     connect(mainWindow, &MainWindow::showConfiguration, this, &AudioVisual::showConfiguration);
     connect(mainWindow, &MainWindow::toggleRunning, this, &AudioVisual::toggleRun);

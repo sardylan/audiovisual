@@ -64,11 +64,7 @@ public:
 
     bool isBfoEnabled() const;
 
-    void setBfoEnabled(bool value);
-
     unsigned int getBfoFrequency() const;
-
-    void setBfoFrequency(unsigned int value);
 
 public slots:
 
@@ -77,6 +73,10 @@ public slots:
     void stop();
 
     void setGain(double value);
+
+    void setBfoEnabled(bool value);
+
+    void setBfoFrequency(unsigned int value);
 
 private:
     QAudioDeviceInfo deviceInfo;
@@ -113,6 +113,8 @@ private:
 
     void sendOutputAudio(const QList<double> &value);
 
+    void processBFO(QList<double> &values);
+
 private slots:
 
     void readAvailableData();
@@ -121,14 +123,17 @@ signals:
 
     void newStatus(bool value);
 
-    void newAudioData(const QByteArray &data);
-
     void newMaxFrequency(const unsigned int &maxFrequency);
+
+    void newAudioData(const QByteArray &data);
 
     void newAudioRms(const double &rms);
 
     void newAudioFFT(const QList<double> &fft);
 
+    void newBfoStatus(const bool &status);
+
+    void newBfoFrequency(const unsigned int &frequency);
 };
 
 #endif

@@ -54,6 +54,10 @@ public slots:
 
     void updateWaterfallMaxFrequency(const unsigned int &maxFrequency);
 
+    void updateBfoStatus(const bool &value);
+
+    void updateBfoFrequency(const unsigned int &frequency);
+
 private:
     Ui::MainWindow *ui;
 

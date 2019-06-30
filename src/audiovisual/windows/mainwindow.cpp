@@ -112,3 +112,11 @@ void MainWindow::handleNewBfoFrequency(unsigned int frequency) {
     ui->bfoFrequenctValue->setText(QString("%1").arg(frequency));
     emit newBfoFrequency(frequency);
 }
+
+void MainWindow::updateBfoStatus(const bool &value) {
+    waterfall->setBfoEnabled(value);
+}
+
+void MainWindow::updateBfoFrequency(const unsigned int &frequency) {
+    waterfall->setBfoFrequency(frequency);
+}

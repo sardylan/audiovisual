@@ -81,6 +81,8 @@ bool AudioWorker::isBfoEnabled() const {
 
 void AudioWorker::setBfoEnabled(bool value) {
     AudioWorker::bfoEnabled = value;
+
+    emit newBfoStatus(bfoEnabled);
 }
 
 unsigned int AudioWorker::getBfoFrequency() const {
@@ -89,6 +91,8 @@ unsigned int AudioWorker::getBfoFrequency() const {
 
 void AudioWorker::setBfoFrequency(unsigned int value) {
     AudioWorker::bfoFrequency = value;
+
+    emit newBfoFrequency(bfoFrequency);
 }
 
 void AudioWorker::start() {
@@ -199,6 +203,12 @@ void AudioWorker::parsePayload(const QByteArray &payloadData) {
         values.append(v);
     }
 
+    QtConcurrent::run(this, &AudioWorker::processBFO, values);
+    QtConcurrent::run(this, &AudioWorker::computeRMS, values);
+    QtConcurrent::run(this, &AudioWorker::computeFFT, values);
+}
+
+void AudioWorker::processBFO(QList<double> &values) {
     QList<double> outputValues;
 
     if (bfoEnabled) {
@@ -210,9 +220,6 @@ void AudioWorker::parsePayload(const QByteArray &payloadData) {
     }
 
     QtConcurrent::run(this, &AudioWorker::sendOutputAudio, outputValues);
-
-    QtConcurrent::run(this, &AudioWorker::computeRMS, values);
-    QtConcurrent::run(this, &AudioWorker::computeFFT, values);
 }
 
 void AudioWorker::computeRMS(QList<double> &values) {

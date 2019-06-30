@@ -40,6 +40,9 @@ Waterfall::Waterfall(QWidget *parent) : QOpenGLWidget(parent) {
     showMousePos = false;
     mousePosX = 0;
     maxFrequency = 0;
+
+    bfoEnabled = false;
+    bfoFrequency = 0;
 }
 
 Waterfall::~Waterfall() = default;
@@ -122,10 +125,19 @@ void Waterfall::paintGL() {
         }
     }
 
+    if (bfoEnabled && bfoFrequency >= 0 && bfoFrequency <= maxFrequency) {
+        float x = (float) bfoFrequency / maxFrequency;
+        glBegin(GL_LINES);
+        glColor4ub(255, 0, 0, 64);
+        glVertex2f(x, 0);
+        glVertex2f(x, height);
+        glEnd();
+    }
+
     if (showMousePos) {
         float x = (float) mousePosX / width;
         glBegin(GL_LINES);
-        glColor3f(128, 128, 128);
+        glColor4ub(255, 255, 255, 64);
         glVertex2f(x, 0);
         glVertex2f(x, height);
         glEnd();
@@ -162,6 +174,22 @@ unsigned int Waterfall::getMaxFrequency() const {
 
 void Waterfall::setMaxFrequency(unsigned int value) {
     Waterfall::maxFrequency = value;
+}
+
+bool Waterfall::isBfoEnabled() const {
+    return bfoEnabled;
+}
+
+void Waterfall::setBfoEnabled(bool value) {
+    Waterfall::bfoEnabled = value;
+}
+
+unsigned int Waterfall::getBfoFrequency() const {
+    return bfoFrequency;
+}
+
+void Waterfall::setBfoFrequency(unsigned int value) {
+    Waterfall::bfoFrequency = value;
 }
 
 void Waterfall::addData(const QList<double> &value) {
