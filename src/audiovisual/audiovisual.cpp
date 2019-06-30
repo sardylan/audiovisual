@@ -20,6 +20,7 @@
  */
 
 #include <QtCore/QDebug>
+#include <QtCore/QList>
 #include <QtCore/QtMath>
 
 #include "audiovisual.hpp"
@@ -36,6 +37,8 @@ int main(int argc, char *argv[]) {
 }
 
 AudioVisual::AudioVisual(int &argc, char **argv) : QApplication(argc, argv) {
+    qRegisterMetaType<QList<double>>("QList<double>");
+
     status = Status::getInstance();
     config = Config::getInstance();
 
@@ -43,6 +46,8 @@ AudioVisual::AudioVisual(int &argc, char **argv) : QApplication(argc, argv) {
 
     mainWindow = new MainWindow();
     configWindow = new ConfigWindow();
+
+    audioMaxValue = 0;
 }
 
 AudioVisual::~AudioVisual() {
@@ -133,14 +138,14 @@ void AudioVisual::newGainValue(double value) {
     audioWorker->setGain(value);
 }
 
-void AudioVisual::newMaxFrequency(const unsigned int &maxFrequency) {
+void AudioVisual::newMaxFrequency(const unsigned int maxFrequency) {
     mainWindow->updateWaterfallMaxFrequency(maxFrequency);
 }
 
-void AudioVisual::newAudioRms(const double &rms) {
+void AudioVisual::newAudioRms(const double rms) {
     mainWindow->updateVuMeter(rms);
 }
 
-void AudioVisual::newAudioFFT(const QList<double> &fft) {
+void AudioVisual::newAudioFFT(const QList<double> fft) {
     mainWindow->updateWaterfall(fft);
 }

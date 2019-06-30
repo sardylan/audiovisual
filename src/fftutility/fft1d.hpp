@@ -40,11 +40,11 @@ class FFT1D {
 
 public:
 
-    FFT1D(const unsigned int &size, const double &inputMaxValue, const double &outputMaxValue);
+    FFT1D(unsigned int size, double inputMaxValue, double outputMaxValue);
 
     ~FFT1D();
 
-    QList<double> execute(const QList<double> &data);
+    QList<double> execute(QList<double> data);
 
 private:
     const unsigned int size;

@@ -144,14 +144,16 @@ void Waterfall::paintGL() {
     }
 }
 
-void Waterfall::mouseMoveEvent(QMouseEvent *event) {
-    mousePosX = event->pos().x();
-    update();
-
+void Waterfall::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         auto frequency = (unsigned int) (((double) mousePosX / width) * maxFrequency);
         emit newClickFrequency(frequency);
     }
+}
+
+void Waterfall::mouseMoveEvent(QMouseEvent *event) {
+    mousePosX = event->pos().x();
+    update();
 }
 
 void Waterfall::enterEvent(QEvent *event) {
@@ -192,7 +194,7 @@ void Waterfall::setBfoFrequency(unsigned int value) {
     Waterfall::bfoFrequency = value;
 }
 
-void Waterfall::addData(const QList<double> &value) {
+void Waterfall::addData(const QList<double> value) {
     dataList.append(value);
     cleanDataList();
     update();

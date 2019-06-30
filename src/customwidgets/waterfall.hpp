@@ -45,7 +45,7 @@ public:
 
 public slots:
 
-    void addData(const QList<double> &value);
+    void addData(QList<double> value);
 
     void setMaxFrequency(unsigned int value);
 
@@ -66,6 +66,8 @@ protected:
     void enterEvent(QEvent *event) override;
 
     void leaveEvent(QEvent *event) override;
+
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     int width;

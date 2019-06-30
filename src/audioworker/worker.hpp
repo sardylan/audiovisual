@@ -105,15 +105,15 @@ private:
 
     double gain;
 
-    void parsePayload(const QByteArray &payloadData);
+    void parsePayload(QByteArray payloadData);
 
-    void computeRMS(QList<double> &values);
+    void computeRMS(QList<double> values);
 
-    void computeFFT(QList<double> &values);
+    void computeFFT(QList<double> values);
 
-    void sendOutputAudio(const QList<double> &value);
+    void sendOutputAudio(QList<double> value);
 
-    void processBFO(QList<double> &values);
+    void processBFO(QList<double> values);
 
 private slots:
 
@@ -123,17 +123,17 @@ signals:
 
     void newStatus(bool value);
 
-    void newMaxFrequency(const unsigned int &maxFrequency);
+    void newMaxFrequency(unsigned int maxFrequency);
 
-    void newAudioData(const QByteArray &data);
+    void newAudioData(QByteArray data);
 
-    void newAudioRms(const double &rms);
+    void newAudioRms(double rms);
 
-    void newAudioFFT(const QList<double> &fft);
+    void newAudioFFT(QList<double> fft);
 
-    void newBfoStatus(const bool &status);
+    void newBfoStatus(bool status);
 
-    void newBfoFrequency(const unsigned int &frequency);
+    void newBfoFrequency(unsigned int frequency);
 };
 
 #endif

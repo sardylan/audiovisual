@@ -33,11 +33,11 @@ public:
 
     ~DSP();
 
-    static const QList<double> multiply(QList<double> &signal, QList<double> &beat);
+    static QList<double> multiply(QList<double> signal, QList<double> beat);
 
-    static const QList<double> generateSine(int sampleRate, unsigned int frequency, double phase, int len);
+    static QList<double> generateSine(int sampleRate, unsigned int frequency, double phase, int len);
 
-    static const double getPhaseForNextGeneration(QList<double> &signal);
+    static double getPhaseForNextGeneration(QList<double> signal);
 };
 
 #endif

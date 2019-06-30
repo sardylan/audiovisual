@@ -167,7 +167,7 @@ void AudioWorker::readAvailableData() {
     rawData.clear();
 }
 
-void AudioWorker::parsePayload(const QByteArray &payloadData) {
+void AudioWorker::parsePayload(const QByteArray payloadData) {
     int channels = format.channelCount();
     int bytes = format.sampleSize() / 8;
     int increment = channels * bytes;
@@ -208,7 +208,7 @@ void AudioWorker::parsePayload(const QByteArray &payloadData) {
     QtConcurrent::run(this, &AudioWorker::computeFFT, values);
 }
 
-void AudioWorker::processBFO(QList<double> &values) {
+void AudioWorker::processBFO(QList<double> values) {
     QList<double> outputValues;
 
     if (bfoEnabled) {
@@ -222,7 +222,7 @@ void AudioWorker::processBFO(QList<double> &values) {
     QtConcurrent::run(this, &AudioWorker::sendOutputAudio, outputValues);
 }
 
-void AudioWorker::computeRMS(QList<double> &values) {
+void AudioWorker::computeRMS(QList<double> values) {
     double sum = 0;
 
     for (const double &v: values)
@@ -232,7 +232,7 @@ void AudioWorker::computeRMS(QList<double> &values) {
     emit newAudioRms(rms);
 }
 
-void AudioWorker::computeFFT(QList<double> &values) {
+void AudioWorker::computeFFT(QList<double> values) {
     QList<double> fft = fft1D->execute(values);
 
     emit newAudioFFT(fft);
@@ -246,7 +246,7 @@ void AudioWorker::setGain(double value) {
     AudioWorker::gain = value;
 }
 
-void AudioWorker::sendOutputAudio(const QList<double> &value) {
+void AudioWorker::sendOutputAudio(const QList<double> value) {
     QByteArray data;
 
     int bytesPerSample = format.sampleSize() / 8;

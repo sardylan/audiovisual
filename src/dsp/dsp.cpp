@@ -29,7 +29,7 @@ DSP::DSP() = default;
 
 DSP::~DSP() = default;
 
-const QList<double> DSP::multiply(QList<double> &signal, QList<double> &beat) {
+QList<double> DSP::multiply(QList<double> signal, QList<double> beat) {
     QList<double> output;
 
     for (int i = 0; i < signal.length() && i < beat.length(); i++)
@@ -38,7 +38,7 @@ const QList<double> DSP::multiply(QList<double> &signal, QList<double> &beat) {
     return output;
 }
 
-const QList<double> DSP::generateSine(int sampleRate, unsigned int frequency, double phase, int len) {
+QList<double> DSP::generateSine(int sampleRate, unsigned int frequency, double phase, int len) {
     const double pulse = 2 * M_PI * frequency;
 
     QList<double> sine;
@@ -51,7 +51,7 @@ const QList<double> DSP::generateSine(int sampleRate, unsigned int frequency, do
     return sine;
 }
 
-const double DSP::getPhaseForNextGeneration(QList<double> &signal) {
+double DSP::getPhaseForNextGeneration(QList<double> signal) {
     const double lastItem = signal.last();
     return qAsin(lastItem);
 }

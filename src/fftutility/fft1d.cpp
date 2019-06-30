@@ -25,9 +25,9 @@
 
 #include "fft1d.hpp"
 
-FFT1D::FFT1D(const unsigned int &size,
-             const double &inputMaxValue,
-             const double &outputMaxValue) :
+FFT1D::FFT1D(const unsigned int size,
+             const double inputMaxValue,
+             const double outputMaxValue) :
         size(size),
         inputMaxValue(inputMaxValue),
         outputMaxValue(outputMaxValue),
@@ -46,7 +46,7 @@ FFT1D::~FFT1D() {
     fftw_free(output);
 }
 
-QList<double> FFT1D::execute(const QList<double> &data) {
+QList<double> FFT1D::execute(const QList<double> data) {
     fftLock.acquire();
 
     for (int i = 0; i < size; i++)

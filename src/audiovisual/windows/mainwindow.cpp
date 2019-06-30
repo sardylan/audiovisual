@@ -71,22 +71,22 @@ void MainWindow::updateRunning(bool value) {
     ui->actionRun->setChecked(value);
 }
 
-void MainWindow::updateVuMeterMax(const double &value) {
+void MainWindow::updateVuMeterMax(const double value) {
     vuMeter->setMin(0);
     vuMeter->setWarning(value * .5);
     vuMeter->setAlert(value * .75);
     vuMeter->setMax(value);
 }
 
-void MainWindow::updateVuMeter(const double &value) {
+void MainWindow::updateVuMeter(const double value) {
     vuMeter->setValue(value);
 }
 
-void MainWindow::updateWaterfall(const QList<double> &data) {
+void MainWindow::updateWaterfall(const QList<double> data) {
     waterfall->addData(data);
 }
 
-void MainWindow::updateWaterfallMaxFrequency(const unsigned int &maxFrequency) {
+void MainWindow::updateWaterfallMaxFrequency(const unsigned int maxFrequency) {
     waterfall->setMaxFrequency(maxFrequency);
 }
 
@@ -113,10 +113,10 @@ void MainWindow::handleNewBfoFrequency(unsigned int frequency) {
     emit newBfoFrequency(frequency);
 }
 
-void MainWindow::updateBfoStatus(const bool &value) {
+void MainWindow::updateBfoStatus(const bool value) {
     waterfall->setBfoEnabled(value);
 }
 
-void MainWindow::updateBfoFrequency(const unsigned int &frequency) {
+void MainWindow::updateBfoFrequency(const unsigned int frequency) {
     waterfall->setBfoFrequency(frequency);
 }

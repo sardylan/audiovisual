@@ -46,17 +46,17 @@ public slots:
 
     void updateRunning(bool value);
 
-    void updateVuMeterMax(const double &value);
+    void updateVuMeterMax(double value);
 
-    void updateVuMeter(const double &value);
+    void updateVuMeter(double value);
 
-    void updateWaterfall(const QList<double> &data);
+    void updateWaterfall(QList<double> data);
 
-    void updateWaterfallMaxFrequency(const unsigned int &maxFrequency);
+    void updateWaterfallMaxFrequency(unsigned int maxFrequency);
 
-    void updateBfoStatus(const bool &value);
+    void updateBfoStatus(bool value);
 
-    void updateBfoFrequency(const unsigned int &frequency);
+    void updateBfoFrequency(unsigned int frequency);
 
 private:
     Ui::MainWindow *ui;

@@ -64,11 +64,11 @@ private slots:
 
     void newGainValue(double value);
 
-    void newMaxFrequency(const unsigned int &maxFrequency);
+    void newMaxFrequency(unsigned int maxFrequency);
 
-    void newAudioRms(const double &rms);
+    void newAudioRms(double rms);
 
-    void newAudioFFT(const QList<double> &fft);
+    void newAudioFFT(QList<double> fft);
 };
 
 #endif
