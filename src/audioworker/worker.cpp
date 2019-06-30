@@ -201,10 +201,13 @@ void AudioWorker::parsePayload(const QByteArray &payloadData) {
 
     QList<double> outputValues;
 
-    if (bfoEnabled)
-        outputValues = DSP::multiply(values, values);
-    else
+    if (bfoEnabled) {
+        QList<double> beatValues = DSP::generateSine(format.sampleRate(), bfoFrequency, bfoAngle, values.length());
+        bfoAngle = DSP::getPhaseForNextGeneration(beatValues);
+        outputValues = DSP::multiply(values, beatValues);
+    } else {
         outputValues = values;
+    }
 
     QtConcurrent::run(this, &AudioWorker::sendOutputAudio, outputValues);
 

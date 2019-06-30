@@ -136,7 +136,7 @@ void Waterfall::mouseMoveEvent(QMouseEvent *event) {
     mousePosX = event->pos().x();
     update();
 
-    if (event->type() == QEvent::MouseButtonPress) {
+    if (event->button() == Qt::LeftButton) {
         auto frequency = (unsigned int) (((double) mousePosX / width) * maxFrequency);
         emit newClickFrequency(frequency);
     }

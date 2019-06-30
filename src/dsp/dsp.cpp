@@ -20,6 +20,9 @@
  */
 
 
+#include <QtCore/QtMath>
+#include <QtCore/QList>
+
 #include "dsp.hpp"
 
 DSP::DSP() = default;
@@ -33,4 +36,22 @@ const QList<double> DSP::multiply(QList<double> &signal, QList<double> &beat) {
         output.append(signal[i] * beat[i]);
 
     return output;
+}
+
+const QList<double> DSP::generateSine(int sampleRate, unsigned int frequency, double phase, int len) {
+    const double pulse = 2 * M_PI * frequency;
+
+    QList<double> sine;
+
+    for (int i = 0; i < len; i++) {
+        double angle = pulse * ((double) i / sampleRate);
+        sine.append(qSin(angle + phase));
+    }
+
+    return sine;
+}
+
+const double DSP::getPhaseForNextGeneration(QList<double> &signal) {
+    const double lastItem = signal.last();
+    return qAsin(lastItem);
 }
