@@ -1,6 +1,6 @@
 find_package(OpenGL REQUIRED COMPONENTS
-        OpenGL
-        GLX)
+        OpenGL)
+
 include_directories(${OPENGL_INCLUDE_DIRS})
 
 find_package(Qt5 REQUIRED COMPONENTS
@@ -25,9 +25,7 @@ target_link_libraries(customwidgets
         Qt5::Gui
         Qt5::Svg
         Qt5::Widgets
-        Qt5::OpenGL
-        OpenGL::OpenGL
-        OpenGL::GLU)
+        Qt5::OpenGL)
 
 target_include_directories(customwidgets
         INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

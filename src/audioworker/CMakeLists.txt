@@ -3,11 +3,6 @@ find_package(Qt5 REQUIRED COMPONENTS
         Multimedia
         Concurrent)
 
-find_package(FFTW REQUIRED COMPONENTS
-        FFTW_MT)
-
-include_directories(${FFTW_INCLUDE_DIRS})
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(audioworker
@@ -20,7 +15,6 @@ target_link_libraries(audioworker
         Qt5::Core
         Qt5::Multimedia
         Qt5::Concurrent
-        FFTW::FFTW_MT
         fftw3)
 
 target_include_directories(audioworker

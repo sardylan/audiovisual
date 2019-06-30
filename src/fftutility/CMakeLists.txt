@@ -2,11 +2,6 @@ find_package(Qt5 REQUIRED COMPONENTS
         Core
         Test)
 
-find_package(FFTW REQUIRED COMPONENTS
-        FFTW_MT)
-
-include_directories(${FFTW_INCLUDE_DIRS})
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(fftutility

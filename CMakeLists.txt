@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 project(audiovisual)
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -11,6 +9,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 set(QT5_PREFIX "$ENV{QTDIR}" CACHE PATH "Qt5 prefix path")
+set(FFTW_DIR "$ENV{FFTW_DIR}" CACHE PATH "FFTW prefix path")
 
 find_program(QT5_QMAKE_BIN
         qmake

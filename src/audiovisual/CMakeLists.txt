@@ -34,4 +34,7 @@ target_link_libraries(audiovisual
         Qt5::Svg
         Qt5::Widgets
         Qt5::OpenGL
-        Qt5::Multimedia)
+        Qt5::Multimedia
+        opengl32
+        glu32
+        freeglut)
